@@ -9,8 +9,15 @@ def recommendGeo(user):
   except Exception as e:
     print(e)
   
-  raw = client.table("musics").select("title, artist_id(name)").execute()
-  print(raw.data)
+  try:
+    raw = client.table("musics").select("title, artist_id(name)").execute()
+  except Exception as e:
+    print(e)
+  
+  res = raw.data
+
+  for m in res:
+    print(m)
 
 if __name__ == "__main__":
   recommendGeo(1)
