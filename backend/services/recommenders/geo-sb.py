@@ -43,12 +43,21 @@ def recommendGeo(user, limit=10, radius=10):
     index += 1
   
   del index
+  del distances[user]
 
   for i in list(distances.keys()):
     if distances[i] > radius:
       del distances[i]
+  
+  try:
+    rawNearbyMusics = client.table("user_music_ratings").select("id").execute()
+  except Exception as e:
+    print(f"Musics nearby:\n{e}")
+    return
 
-  print(distances)
+  # return distances
+  print(rawNearbyMusics.data)
+
 
 if __name__ == "__main__":
   recommendGeo(1, 4)
