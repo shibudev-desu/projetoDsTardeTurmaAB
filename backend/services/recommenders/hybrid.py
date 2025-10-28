@@ -65,3 +65,26 @@ async def recommend_hybrid(
   pop_norm = _normalize_score_map(pop_map)
   coll_norm = _normalize_score_map(coll_map)
   geo_norm = _normalize_score_map(geo_map)
+
+  # Realizando o rebalanço dos pesos
+
+  total = float(w_pop + w_collab + w_geo) or 1.0
+  w_pop /= total
+  w_collab /= total
+  w_geo /= total
+
+  combined = defaultdict(float)
+
+  for mid, s in pop_norm.items():
+    combined[mid] += w_pop * s
+  for mid, s in coll_norm.items():
+    combined[mid] += w_collab * s
+  for mid, s in geo_norm.items():
+    combined[mid] += w_geo * s
+
+  if not combined:
+    return await recommend_popular(user_id=user_id, limit=limit)
+
+  sorted_top = sorted(combined.items(), key=lambda x: x[1], reverse=True)[:limit]
+  ids = [i for i, _ in sorted_top]
+  score_lookup = dict(sorted_top)
