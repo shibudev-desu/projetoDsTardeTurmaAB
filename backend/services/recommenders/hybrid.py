@@ -88,3 +88,12 @@ async def recommend_hybrid(
   sorted_top = sorted(combined.items(), key=lambda x: x[1], reverse=True)[:limit]
   ids = [i for i, _ in sorted_top]
   score_lookup = dict(sorted_top)
+
+  # Busca das músicas no Supabase
+
+  response = supabase.table("musics") \
+    .select("id, title, artist_id") \
+    .in_("id", ids) \
+    .execute()
+
+  musics = response.data or []
