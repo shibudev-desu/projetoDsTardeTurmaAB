@@ -8,13 +8,13 @@ def recommendGeo(user, limit=10, radius=10):
   try:
     client = sb.create_client(url, key)
   except Exception as e:
-    print(f"Connection:\n{e}")
+    print(f"Init connection:\n{e}")
     return
   
   try:
     rawMusics = client.table("musics").select("title, artist_id").limit(limit).execute()
   except Exception as e:
-    print(f"Musics:\n{e}")
+    print(f"Select musics:\n{e}")
     return
   
   res = rawMusics.data
@@ -31,7 +31,7 @@ def recommendGeo(user, limit=10, radius=10):
       rawIds = client.table("users").select("latitude, longitude").eq("id", id).execute()
       coordinates.append(rawIds.data[0])
   except Exception as e:
-    print(f"Users:\n{e}")
+    print(f"Select locations:\n{e}")
     return
 
   default = coordinates[0]
@@ -45,19 +45,19 @@ def recommendGeo(user, limit=10, radius=10):
   del index
   del distances[user]
 
-  for i in list(distances.keys()):
-    if distances[i] > radius:
-      del distances[i]
+  # for i in list(distances.keys()):
+  #   if distances[i] > radius:
+  #     del distances[i]
+  
+  excludeIds = list(distances.keys())
   
   try:
-    rawNearbyMusics = client.table("user_music_ratings").select("id").execute()
+    rawNM = client.table("musics").select("id").not_.in_("artist_id", excludeIds).execute()
   except Exception as e:
-    print(f"Musics nearby:\n{e}")
+    print(f"Select musics nearby:\n{e}")
     return
-
-  # return distances
-  print(rawNearbyMusics.data)
-
+  
+  print(rawNM.data)
 
 if __name__ == "__main__":
   recommendGeo(1, 4)
