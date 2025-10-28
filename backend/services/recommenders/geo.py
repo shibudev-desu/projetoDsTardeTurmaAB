@@ -3,7 +3,7 @@ from peewee import fn
 import logging
 from ramos_popular import recommend_popular
 from utils.ramos_helper import try_import_models
-from utils.geo import haversine
+from services.recommenders.haversine import haversine
 
 logger = logging.getLogger(__name__)
 
