@@ -52,3 +52,16 @@ async def recommend_hybrid(
     limit=limit * 3,
     method=geo_method
   )
+
+  # Aqui é feito a conversão para o score maps
+
+  pop_map = {p["id"]: float(p.get("likes", 0.0)) for p in pop}
+  coll_map = {c["id"]: float(c.get("score", 0.0)) for c in coll}
+  geo_map = {
+    g["id"]: (1.0 / (1.0 + g["distance_km"])) if g.get("distance_km") else 0.0
+    for g in geo
+  }
+
+  pop_norm = _normalize_score_map(pop_map)
+  coll_norm = _normalize_score_map(coll_map)
+  geo_norm = _normalize_score_map(geo_map)
