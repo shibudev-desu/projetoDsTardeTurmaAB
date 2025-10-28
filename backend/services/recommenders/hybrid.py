@@ -8,6 +8,8 @@ from ramos_popular import recommend_popular
 from geo import recommend_geo
 from app.db.supabase_client import get_supabase
 
+# Recomendações
+
 def _normalize_score_map(m: dict) -> dict:
   if not m:
     return {}
@@ -31,6 +33,8 @@ async def recommend_hybrid(
   geo_method: str = "haversine"
 ):
   supabase = get_supabase()
+
+  # Recomendações individuais
 
   pop = await recommend_popular(
     user_id=user_id,
@@ -97,3 +101,12 @@ async def recommend_hybrid(
     .execute()
 
   musics = response.data or []
+
+  # Inserção do score final para retornar ordenado
+
+  for m in musics:
+    m["score"] = float(score_lookup.get(m["id"], 0.0))
+
+  musics.sort(key=lambda x: x["score"], reverse=True)
+
+  return musics
