@@ -4,9 +4,17 @@ from app.db.fake_db import fake_db
 
 router = APIRouter()
 
+<<<<<<< Updated upstream
 @router.get("/get_music")
 def get_music():
     return fake_db['musics']
+=======
+@router.get("/selectmusic")
+def get_musics():
+    supabase = get_supabase()
+    response = supabase.table("musics").select("*").execute()
+    return response.data  
+>>>>>>> Stashed changes
 
 @router.get("/{music_id}")
 def get_music(music_id: int):
