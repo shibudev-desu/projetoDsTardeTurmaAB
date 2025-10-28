@@ -31,3 +31,24 @@ async def recommend_hybrid(
   geo_method: str = "haversine"
 ):
   supabase = get_supabase()
+
+  pop = await recommend_popular(
+    user_id=user_id,
+    limit=limit * 3
+  )
+
+  try:
+    coll = await recommend_collaborative_user_based(
+      user_id=user_id,
+      limit=limit * 3,
+      similarity=collab_similarity
+    )
+  except Exception:
+    coll = []
+
+  geo = await recommend_geo(
+    user_id=user_id,
+    radius_km=20.0,
+    limit=limit * 3,
+    method=geo_method
+  )
