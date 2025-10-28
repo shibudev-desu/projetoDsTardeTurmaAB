@@ -35,11 +35,20 @@ def recommendGeo(user, limit=10, radius=10):
     return
 
   default = coordinates[0]
-  distances = []
+  distances = {}
+  index = 0
 
   for coordinate in coordinates:
-    print(coordinate)
-    distances.append(haversine(default["longitude"], default["latitude"], coordinate["longitude"], coordinate["latitude"]))
+    distances[userIds[index]] = haversine(default["longitude"], default["latitude"], coordinate["longitude"], coordinate["latitude"])
+    index += 1
+  
+  del index
+
+  for i in list(distances.keys()):
+    if distances[i] > radius:
+      del distances[i]
+
+  print(distances)
 
 if __name__ == "__main__":
-  recommendGeo(1, 4,)
+  recommendGeo(1, 4)
