@@ -3,7 +3,7 @@ from peewee import fn
 import logging
 from ramos_popular import recommend_popular
 from utils.ramos_helper import try_import_models
-from utils.geo import _haversine_km
+from utils.geo import haversine
 
 logger = logging.getLogger(__name__)
 
@@ -83,7 +83,7 @@ def recommend_geo(User=None, Music=None, UserMusicRating=None, user_id: int = No
       continue
     
     try:
-      dist_km = _haversine_km(float(user.latitude), float(user.longitude), float(row.latitude), float(row.longitude))
+      dist_km = haversine(float(user.latitude), float(user.longitude), float(row.latitude), float(row.longitude))
     except Exception:
       continue
     
