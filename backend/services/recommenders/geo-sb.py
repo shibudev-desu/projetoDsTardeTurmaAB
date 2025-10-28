@@ -19,6 +19,9 @@ def recommendGeo(user, limit=10):
 
   for m in res:
     print(f"artist_id: {m['artist_id']}")
+    
+    if m['artist_id'] not in userIds:
+      userIds.append(m['artist_id'])
 
   try:
     for id in userIds:
