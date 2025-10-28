@@ -10,14 +10,14 @@ def recommendGeo(user, limit=10):
     print(e)
   
   try:
-    raw = client.table("musics").select("title, artist_id(name)").limit(limit).execute()
+    raw = client.table("musics").select("title, artist_id").limit(limit).execute()
   except Exception as e:
     print(e)
   
   res = raw.data
 
   for m in res:
-    print(m)
+    print(f"artist_id: {m['artist_id']}")
 
 if __name__ == "__main__":
-  recommendGeo(1)
+  recommendGeo(1, 2)
