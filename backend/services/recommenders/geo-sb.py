@@ -19,10 +19,13 @@ def recommendGeo(user, limit=10):
 
   for m in res:
     print(f"artist_id: {m['artist_id']}")
-    userIds.append(m['artist_id'])
 
-  print(userIds)
-  
+  try:
+    for id in userIds:
+      raw = client.table("users").select("latitude, longitude").eq("id", id).execute()
+      print(raw.data)
+  except Exception as e:
+    print(e)
 
 if __name__ == "__main__":
   recommendGeo(1, 2)
