@@ -68,7 +68,18 @@ def recommendGeo(user, limit=10, radius=10):
     print(f"Select musics nearby:\n{e}")
     return
   
-  print(rawMusics.data)
+  idMusics = []
+
+  for i in rawMusics.data:
+    idMusics.append(i["id"])
+
+  try:
+    lastQuery = client.table("musics").select("id, title, artist_id(name)").in_("id", idMusics).execute()
+  except Exception as e:
+    print(f"Last query:\n{e}")
+    return
+
+  return lastQuery.data
 
 if __name__ == "__main__":
   recommendGeo(1, 4)
