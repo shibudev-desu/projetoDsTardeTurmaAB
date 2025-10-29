@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from app.routers import users, music
-from services import popular
+from services import popular, usersJoin
 from app.db.supabase_client import get_supabase, SUPABASE_KEY, SUPABASE_URL
 app = FastAPI(title="Backend React Native API")
 
@@ -8,6 +8,7 @@ app = FastAPI(title="Backend React Native API")
 app.include_router(users.router, prefix="/api/users", tags=["users"])
 app.include_router(music.router, prefix="/api/music", tags=["music"])
 app.include_router(popular.router, prefix="/api", tags=["popular"])
+app.include_router(usersJoin.router, prefix="/api", tags=["colab"])
 
 @app.get("/")
 def root():

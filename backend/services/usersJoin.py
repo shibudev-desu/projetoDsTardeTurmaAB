@@ -1,27 +1,30 @@
 from typing import Dict, Any, List, Counter
-from peewee import fn, JOIN
 from collections import defaultdict
-
 from .popular import recommend_popular
-from .helper import try_import_models
+from app.db.supabase_client import get_supabase
+from fastapi import APIRouter, HTTPException, status
 
-def recommend_collaborative_user(
-    User=None, Music=None, UserMusicRating=None,
-    user_id: int = None, limit: int = 10, neighbor_fetch_limit: int = 200,
+router = APIRouter()
+
+@router.get('colab')
+def recColab(
+    user_id: int = None, 
+    limit: int = 10, 
+    neigh_limit: int = 200,
 ) -> List[Dict[str, Any]]:
-  
-  if not (User and Music and UserMusicRating):
-    imported = try_import_models()
-    User = User or imported.get("User")
-    Music = Music or imported.get("Music")
-    UserMusicRating = UserMusicRating or imported.get("UserMusicRating")
-  if not (User and Music and UserMusicRating):
-    raise RuntimeError("Modelos não fornecidos.")
-  
+  supabase = get_supabase()
 
-  target_likes_q = (UserMusicRating.select(UserMusicRating.music).where((UserMusicRating.user == user_id) & (UserMusicRating.rating == 1)))
+  if user_id is not None:
+    user = supabase.table("users").select("id").eq("id", user_id).execute()
+    if not user.data:
+      raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND, 
+        detail="User not found"
+        )
+  
+  target_likes_q = supabase.table("User_Music_Ratings").select("id").eq("user_id", user_id).execute()
   target_likes = {r.music_id for r in target_likes_q}
-  if not target_likes: return recommend_popular(User=User, Music=Music, UserMusicRating=UserMusicRating, user_id=user_id, limit=limit)
+  if not target_likes: raise HTTPException( status_code=status.HTTP_404_NOT_FOUND, detail="Music Ratings not found ")
   
   
   candidates_q = (UserMusicRating
