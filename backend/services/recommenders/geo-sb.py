@@ -49,15 +49,26 @@ def recommendGeo(user, limit=10, radius=10):
   #   if distances[i] > radius:
   #     del distances[i]
   
-  excludeIds = list(distances.keys())
+  idsSearch = list(distances.keys())
   
   try:
-    rawNM = client.table("musics").select("id").not_.in_("artist_id", excludeIds).execute()
+    rawSelectRated = client.table("user_music_ratings").select("music_id").eq("user_id", user).execute()
+  except Exception as e:
+    print(f"Select rated musics:\n{e}")
+    return
+  
+  idsExcludedMusic = []
+
+  for i in rawSelectRated.data:
+    idsExcludedMusic.append(i["id"])
+
+  try:
+    rawMusics = client.table("musics").select("id").in_("artist_id", idsSearch).not_.in_("id", idsExcludedMusic).execute()
   except Exception as e:
     print(f"Select musics nearby:\n{e}")
     return
   
-  print(rawNM.data)
+  print(rawMusics.data)
 
 if __name__ == "__main__":
   recommendGeo(1, 4)
