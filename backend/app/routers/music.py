@@ -15,11 +15,13 @@ def get_musics():
     response = supabase.table("musics").select("*").execute()
     return response.data  
 
-@router.get("/{music_id}")
-def get_music(music_id: int):
-    music = next((music for music in fake_db if music["id"] == music_id), None)
-    if music:
-        return music
+@router.get("/musics/{music_ids}")
+def get_music_by_id(music_ids: int):
+    supabase = get_supabase()
+    response = supabase.table("musics").select("*").eq("id", music_ids).execute()
+    if response.data:
+        return response.data[0]
+    return {"error": "Music not found"}
 
 @router.post("/")
 def create_music(music: Music):
