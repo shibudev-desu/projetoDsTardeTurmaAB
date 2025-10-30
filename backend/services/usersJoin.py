@@ -70,13 +70,13 @@ def recColab(
           if mid not in target_likes:
               track_scores[mid] += sim
 
-  if not track_scores:
-      return recommend_popular(User=User, Music=Music, UserMusicRating=UserMusicRating, user_id=user_id, limit=limit)
+  if not track_scores: raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Tracker failed.")
   
   top = track_scores.most_common(limit)
   music_ids = [m for m, _ in top]
 
-  musics_q = Music.select().where(Music.id.in_(music_ids))
+  musics_q = supabase.table("Music").select().filter("id", "in", music_ids).execute()
+  
   musics = []
   score_map = {m: s for m, s in top}
   for m in musics_q:
