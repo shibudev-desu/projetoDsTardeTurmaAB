@@ -58,9 +58,10 @@ def update_music(music_id: int, music: Music):
         return {"message": "Music updated successfully"}
     return {"error": "Music not found"}
 
-@router.delete("/{music_id}")
+@router.delete("/musics/{music_id}")
 def delete_music(music_id: int):
-    if music_id > len(fake_db):
-        return {"error": "Music not found"}
-    del fake_db.musics[music_id - 1]
-    return {"message": "Music deleted"}
+    supabase = get_supabase()
+    response = supabase.table("musics").delete().eq("id", music_id).execute()
+    if response.data:
+        return {"message": "Music deleted successfully"}
+    return {"error": "Music not found"}
