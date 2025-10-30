@@ -41,12 +41,22 @@ def create_music(music: Music):
         return response.data[0]
     return {"error": "Failed to create music"}
 
-@router.put("/{music_id}")
+@router.put("/musics/{music_id}")
 def update_music(music_id: int, music: Music):
-    if music_id > len(fake_db):
-        return {"error": "Music not found"}
-    fake_db.musics[music_id - 1] = {"id": music_id, "title": music.title}
-    return {"message": "Music updated"}
+    supabase = get_supabase()
+    updated_data = {
+        "title": music.title,
+        "description": music.description,
+        "artist_id": music.artist_id,
+        "duration": music.duration,
+        "audio_url": music.audio_url,
+        "lyrics": music.lyrics,
+        "genre": music.genre,
+    }
+    response = supabase.table("musics").update(updated_data).eq("id", music_id).execute()
+    if response.data:
+        return {"message": "Music updated successfully"}
+    return {"error": "Music not found"}
 
 @router.delete("/{music_id}")
 def delete_music(music_id: int):
