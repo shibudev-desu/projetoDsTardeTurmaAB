@@ -54,9 +54,9 @@ def recommendGeo(user, radius=10, limit=10):
   del index
   del distances[user]
 
-  # for i in list(distances.keys()):
-  #   if distances[i] > radius:
-  #     del distances[i]
+  for i in list(distances.keys()):
+    if distances[i] > radius:
+      del distances[i]
   
   idsSearch = list(distances.keys())
   
