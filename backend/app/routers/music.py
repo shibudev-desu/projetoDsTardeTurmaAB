@@ -15,10 +15,10 @@ def get_musics():
     response = supabase.table("musics").select("*").execute()
     return response.data  
 
-@router.get("/musics/{music_ids}")
-def get_music_by_id(music_ids: int):
+@router.get("/musics/{music_id}")
+def get_music_by_id(music_id: int):
     supabase = get_supabase()
-    response = supabase.table("musics").select("*").eq("id", music_ids).execute()
+    response = supabase.table("musics").select("*").eq("id", music_id).execute()
     if response.data:
         return response.data[0]
     return {"error": "Music not found"}
