@@ -28,7 +28,7 @@ def recColab(
   
   ids_str = f"({','.join(map(str, target_likes))})"
   cdd_res = supabase.table("user_music_ratings")\
-      .select("user_id, count(music_id) as common")\
+      .select("user_id", "count(music_id) as common")\
       .filter("music_id", "in", ids_str)\
       .eq("rating", 1)\
       .neq("user_id", user_id)\
@@ -38,29 +38,32 @@ def recColab(
       .execute()
 
   cdd_uid = [r["user_id"] for r in (cdd_res.data or [])]
-  if not cdd_uid: raise HTTPException( status_code=status.HTTP_404_NOT_FOUND, detail="Music Ratings not found ")
+  if not cdd_uid: raise HTTPException( status_code=status.HTTP_404_NOT_FOUND, detail="Candidates not found. ")
   
   likes_map = defaultdict(set)
-  likes_q = (UserMusicRating
-              .select(UserMusicRating.user, UserMusicRating.music)
-              .where((UserMusicRating.user.in_(candidate_user_ids)) & (UserMusicRating.rating == 1)))
-  for r in likes_q:
-      likes_map[r.user_id].add(r.music_id)
+  likes_res = (
+      supabase.table("user_music_ratings")
+      .select("user_id", "music_id")
+      .filter("user_id", "in", cdd_uid)
+      .eq("rating", 1)
+      .execute()
+  )
+  for r in (likes_res.data or []):
+      likes_map[r["user_id"]].add(r["music_id"])
 
   def jaccard(a:set, b:set):
     if not a and not b: return 0.0
-    inter = len(a & b); union = len(a | b)
+    inter = len(a & b) 
+    union = len(a | b)
     return (inter / union) if union else 0.0
   
   sim_scores = {}
-  # Calculo de similaridade
-  for uid, liked_set in likes_map.items():
+  for user_id, liked_set in likes_map.items():
       sim = jaccard(set(target_likes), liked_set)
       if sim > 0:
-          sim_scores[uid] = sim
-  if not sim_scores:
-      return recommend_popular(User=User, Music=Music, UserMusicRating=UserMusicRating, user_id=user_id, limit=limit)
-  
+        sim_scores[uid] = sim
+  if not sim_scores: raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Jaccard failed.")
+       
   track_scores = Counter()
   for uid, sim in sim_scores.items():
       for mid in likes_map.get(uid, set()):
