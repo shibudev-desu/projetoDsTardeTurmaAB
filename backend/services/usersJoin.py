@@ -22,31 +22,23 @@ def recColab(
         detail="User not found"
         )
   
-  target_likes_q = supabase.table("User_Music_Ratings").select("id").eq("user_id", user_id).execute()
-  target_likes = {r.music_id for r in target_likes_q}
+  target_likes_q = supabase.table("user_music_ratings").select("music_id").eq("user_id", user_id).execute()
+  target_likes = {r["music_id"] for r in (target_likes_q.data or [])}
   if not target_likes: raise HTTPException( status_code=status.HTTP_404_NOT_FOUND, detail="Music Ratings not found ")
   
-  
-  candidates_q = (UserMusicRating
-                  .select(UserMusicRating.user, fn.COUNT(UserMusicRating.music).alias("common"))
-                  .where((UserMusicRating.music.in_(list(target_likes))) & (UserMusicRating.rating == 1) & (UserMusicRating.user != user_id))
-                  .group_by(UserMusicRating.user)
-                  .order_by(fn.COUNT(UserMusicRating.music).desc())
-                  .limit(neighbor_fetch_limit))
-  '''
-  SQL equivalente para mais clareza:
-  SELECT user_id, COUNT(music_id) AS common
-  FROM user_music_ratings
-  WHERE music_id IN (:target_likes)  -- lista de IDs curtidos pelo usuário
-    AND rating = 1
-    AND user_id != :user_id
-  GROUP BY user_id
-  ORDER BY common DESC
-  LIMIT :neighbor_fetch_limit;
-  '''
-  candidate_user_ids = [r.user_id for r in candidates_q]
-  if not candidate_user_ids:
-      return recommend_popular(User=User, Music=Music, UserMusicRating=UserMusicRating, user_id=user_id, limit=limit)
+  ids_str = f"({','.join(map(str, target_likes))})"
+  cdd_res = supabase.table("user_music_ratings")\
+      .select("user_id, count(music_id) as common")\
+      .filter("music_id", "in", ids_str)\
+      .eq("rating", 1)\
+      .neq("user_id", user_id)\
+      .group("user_id")\
+      .order("common", desc=True)\
+      .limit(neigh_limit)\
+      .execute()
+
+  cdd_uid = [r["user_id"] for r in (cdd_res.data or [])]
+  if not cdd_uid: raise HTTPException( status_code=status.HTTP_404_NOT_FOUND, detail="Music Ratings not found ")
   
   likes_map = defaultdict(set)
   likes_q = (UserMusicRating
