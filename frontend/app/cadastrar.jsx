@@ -1,25 +1,23 @@
+import { AntDesign } from "@expo/vector-icons";
 import { LinearGradient } from 'expo-linear-gradient';
-import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
+  Alert,
   Animated,
   Image,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
   SafeAreaView,
-  StatusBar,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
-  useWindowDimensions,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  Alert,
-  Keyboard,
   TouchableWithoutFeedback,
+  View,
+  useWindowDimensions
 } from 'react-native';
-import { AntDesign } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native"; 
 
 const Cadastro = () => {
   const { width, height } = useWindowDimensions();
@@ -78,9 +76,11 @@ const Cadastro = () => {
       formPadding: { paddingHorizontal: rf(25) },
       input: {
         width: '100%',
-        height: rf(48),
+        minHeight: rf(70),
+        height: rf(70),
         fontSize: rf(17),
         paddingHorizontal: rf(15),
+        paddingVertical: rf(10),
         marginVertical: rf(8),
       },
       botao: { width: '100%', paddingVertical: rf(12), borderRadius: rf(40), marginTop: rf(20) },
@@ -159,10 +159,16 @@ const Cadastro = () => {
                         placeholder={placeholder}
                         placeholderTextColor="#FFF"
                         value={value}
-                        onChangeText={(t) => {
-                          setter(t);
-                          if (error) setErrors((e) => ({ ...e, [key]: null }));
+                        onChangeText={(text) => {
+                          setter(text);
+                          if (error) {
+                            setErrors((prevErrors) => ({
+                              ...prevErrors,
+                              [key]: null
+                            }));
+                          }
                         }}
+                        autoCorrect={false}
                         {...props}
                       />
                       {error && <Text style={styles.error}>{error}</Text>}
@@ -223,28 +229,31 @@ const styles = StyleSheet.create({
     textAlign: 'center' 
   },
   input: {
-    width: 300,
-    height: 55,
     borderRadius: 25,
-    borderWidth: 3,
-    borderColor: '#FFF',
-    textAlign: 'center',
-    fontFamily: 'normal',
-    shadowColor: '#000',
+    fontSize: 20,
+    borderWidth: 2,
+    borderColor: "#FFF",
+ 
+    fontFamily: "normal",
+    color: "#FFF",
+    shadowColor: "#000",
     shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 7 },
     shadowRadius: 4,
     elevation: 5,
-    backgroundColor: '#1D143642',
-    marginTop: 15,
-    color: '#fff',
-    fontSize: 20,
+    margin: 10,
+    backgroundColor: "#1D143642",
+    minHeight: 70,
+    height: 70,
+    paddingVertical: 10,
+    textAlignVertical: 'center',
   },
   botao: {
+    height: 70,
     backgroundColor: '#1d1436',
-    //borderWidth: 1,
     borderColor: '#8000D5',
     alignItems: 'center',
+    textAlign: 'center',
   },
   textoBotao: { color: '#FFF', fontFamily: 'negrito' },
   error: {
