@@ -17,14 +17,20 @@ export default function Upload() {
 
   return (
     <LinearGradient
-      colors={["#fedea6", "#fc7ea7", "#7466e6"]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
+      colors={['#8000d5', '#f910a3', '#fddf00']}
       style={styles.container}
     >
-      <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        style={styles.scrollContainer} 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          paddingVertical: 20
+        }}
+      >
         <View style={styles.header}>
-        
           <TouchableOpacity 
             onPress={() => navigation.goBack()} 
             style={styles.backButton}
@@ -130,62 +136,183 @@ export default function Upload() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  scrollContainer: { flex: 1, paddingHorizontal: 24 },
-  header: { paddingTop: 60, paddingBottom: 20 },
-  backButton: { alignSelf: "flex-start", marginBottom: 20 },
-  backArrow: { fontSize: 24, color: "#333" }, 
-  inputBlock: { marginBottom: 20 },
-  label: { fontSize: 14, color: "#333", marginBottom: 8 },
-  form: { paddingBottom: 40 },
-  input: {
-    height: 50,
-    backgroundColor: "#fff",
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "#000",
-    paddingHorizontal: 16,
-    fontSize: 16,
+  container: { 
+    flex: 1 
   },
-  textArea: { height: 100, paddingTop: 12, textAlignVertical: "top" },
+  scrollContainer: { 
+    flex: 1,
+    paddingHorizontal: 24,
+  },
+  header: { 
+    paddingTop: 60, 
+    paddingBottom: 20,
+    width: '100%',
+    alignItems: 'center'
+  },
+  backButton: { 
+    position: 'absolute',
+    left: 10,
+    top: 10,
+    zIndex: 1
+  },
+  backArrow: { 
+    fontSize: 24, 
+    color: "#FFF" 
+  },
+  inputBlock: { 
+    marginBottom: 20 
+  },
+  label: { 
+    fontSize: 16, 
+    color: "#FFF", 
+    marginBottom: 8,
+    fontFamily: "normal" 
+  },
+  form: { 
+    width: '90%',
+    maxWidth: 450,
+    paddingBottom: 40,
+    alignItems: 'center'
+  },
+  input: {
+    borderRadius: 25,
+    fontSize: 20,
+    borderWidth: 2,
+    borderColor: "#FFF",
+    textAlign: "center",
+    fontFamily: "normal",
+    color: "#FFF",
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 7 },
+    shadowRadius: 4,
+    elevation: 5,
+    margin: 10,
+    backgroundColor: "#1D143642",
+    minHeight: 70,
+    height: 70,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    textAlignVertical: 'center',
+  },
+  textArea: { 
+    height: 120, 
+    paddingTop: 12, 
+    textAlignVertical: "top",
+    textAlign: "left"
+  },
   uploadButton: {
-    backgroundColor: "#fff",
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "#000",
+    borderRadius: 25,
+    borderWidth: 2,
+    borderColor: "#FFF",
     paddingVertical: 15,
     paddingHorizontal: 16,
     alignItems: "center",
+    backgroundColor: "#1D143642",
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 7 },
+    shadowRadius: 4,
+    elevation: 5,
+    margin: 10,
   },
-  uploadButtonText: { fontSize: 16, color: "#666" },
+  uploadButtonText: { 
+    fontSize: 18, 
+    color: "#FFF",
+    fontFamily: "normal"
+  },
   selectButton: {
-    backgroundColor: "#fff",
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "#000",
+    borderRadius: 25,
+    borderWidth: 2,
+    borderColor: "#FFF",
     paddingVertical: 15,
     paddingHorizontal: 16,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    backgroundColor: "#1D143642",
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 7 },
+    shadowRadius: 4,
+    elevation: 5,
+    margin: 10,
   },
-  selectButtonText: { fontSize: 16, color: "#666" },
-  selectArrow: { fontSize: 12, color: "#666" },
-  genreList: { marginTop: 10, backgroundColor: "#fff", borderRadius: 10 },
-  genreItem: { padding: 12, borderBottomWidth: 1, borderBottomColor: "#ccc" },
-  genreText: { fontSize: 14, color: "#333" },
-  uploadFinalButton: {
-    backgroundColor: "#000",
-    paddingVertical: 16,
+  selectButtonText: { 
+    fontSize: 18, 
+    color: "#FFF",
+    fontFamily: "normal"
+  },
+  selectArrow: { 
+    fontSize: 14, 
+    color: "#FFF" 
+  },
+  genreList: { 
+    marginTop: 10, 
+    backgroundColor: "#1D143642", 
     borderRadius: 25,
-    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "#FFF",
+  },
+  genreItem: { 
+    padding: 12, 
+    borderBottomWidth: 1, 
+    borderBottomColor: "rgba(255,255,255,0.3)" 
+  },
+  genreText: { 
+    fontSize: 16, 
+    color: "#FFF",
+    textAlign: "center",
+    fontFamily: "normal"
+  },
+  uploadFinalButton: {
+    height: 70,
+    backgroundColor: '#1d1436',
+    borderColor: '#8000D5',
+    alignItems: 'center',
+    textAlign: 'center',
+    borderRadius: 40,
     marginTop: 20,
     marginBottom: 30,
+    justifyContent: 'center'
   },
-  uploadFinalButtonText: { color: "#fff", fontSize: 18 },
-  title: { fontSize: 28, color: "#000", textAlign: "center", marginBottom: 8 },
-  subtitle: { fontSize: 16, color: "#666", textAlign: "center" },
-  infoBox: { backgroundColor: "rgba(255, 255, 255, 0.9)", borderRadius: 15, padding: 20, marginTop: 10 },
-  infoTitle: { fontSize: 16, color: "#333", marginBottom: 10 },
-  infoText: { fontSize: 14, color: "#666", marginBottom: 5 },
+  uploadFinalButtonText: { 
+    color: '#FFF', 
+    fontFamily: 'negrito',
+    fontSize: 19
+  },
+  title: { 
+    fontSize: 26, 
+    color: "#FFF", 
+    textAlign: "center", 
+    marginBottom: 8,
+    fontFamily: "negrito"
+  },
+  subtitle: { 
+    fontSize: 16, 
+    color: "#FFF", 
+    textAlign: "center",
+    fontFamily: "normal",
+    marginBottom: 20
+  },
+  infoBox: { 
+    backgroundColor: "#1D143642", 
+    borderRadius: 25, 
+    padding: 20, 
+    marginTop: 10,
+    borderWidth: 2,
+    borderColor: "#FFF", 
+  },
+  infoTitle: { 
+    fontSize: 18, 
+    color: "#FFF", 
+    marginBottom: 10,
+    fontFamily: "negrito"
+  },
+  infoText: { 
+    fontSize: 16, 
+    color: "#FFF", 
+    marginBottom: 5,
+    fontFamily: "normal"
+  },
 });
