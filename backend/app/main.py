@@ -11,4 +11,4 @@ app.include_router(music_router, prefix="/api/musics")
 
 @app.get("/")
 def root():
-    return {"message": "Backend ativo 🚀"}
+    return {}
