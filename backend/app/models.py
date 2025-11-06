@@ -8,3 +8,7 @@ class Artist(BaseModel):
 
 class Music(BaseModel):
     title: str
+
+class Styles(BaseModel):
+    id: int
+    name: str
