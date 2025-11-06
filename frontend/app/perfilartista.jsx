@@ -1,203 +1,221 @@
-import React, { useMemo, memo } from "react";
-import { Text, View, ScrollView, TouchableOpacity, useWindowDimensions } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { useNavigation } from "@react-navigation/native"; 
+import { View, Text, Image, TouchableOpacity, ScrollView, StyleSheet, Dimensions } from "react-native"
+import { Ionicons } from "@expo/vector-icons"
+import { LinearGradient } from "expo-linear-gradient"
 
+const { width } = Dimensions.get("window")
 
-const GenreItem = memo(({ genre, rf, width }) => (
-  <TouchableOpacity
-    style={{
-      backgroundColor: "rgba(255, 182, 193, 0.8)",
-      paddingHorizontal: rf(20),
-      paddingVertical: rf(10),
-      borderRadius: rf(20),
-      marginBottom: rf(10),
-      width: width < 350 ? "100%" : "48%",
-    }}
-  >
-    <Text style={{ color: "white", fontSize: rf(14), textAlign: "center", fontWeight: "500" }}>
-      {genre}
-    </Text>
-  </TouchableOpacity>
-));
+const songs = [
+  { id: 1, title: "Musica 1" },
+  { id: 2, title: "Musica 2" },
+  { id: 3, title: "Musica 3" },
+  { id: 4, title: "Musica 4" },
+  { id: 5, title: "Musica 5" },
+  { id: 6, title: "Musica 6" },
+  { id: 7, title: "Musica 7" },
+]
 
-
-const ArtistItem = memo(({ artist, rf, artistWidth }) => (
-  <TouchableOpacity
-    style={{
-      width: artistWidth,
-      flexDirection: "row",
-      alignItems: "center",
-      backgroundColor: "rgba(255, 182, 193, 0.6)",
-      borderRadius: rf(15),
-      padding: rf(12),
-      marginBottom: rf(10),
-    }}
-  >
-    <View
-      style={{
-        width: rf(40),
-        height: rf(40),
-        borderRadius: rf(20),
-        backgroundColor: "#4A5568",
-        marginRight: rf(10),
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text style={{ color: "white", fontSize: rf(12) }}>{artist.icon}</Text>
-    </View>
-    <Text style={{ color: "white", fontSize: rf(16), fontWeight: "500" }}>{artist.name}</Text>
-  </TouchableOpacity>
-));
-
-
-const HeaderButton = memo(({ rf }) => {
-  const navigation = useNavigation(); 
-  const style = useMemo(
-    () => ({
-      width: rf(40),
-      height: rf(40),
-      justifyContent: "center",
-      alignItems: "center",
-      borderRadius: rf(20),
-      backgroundColor: "rgba(255,255,255,0.2)",
-    }),
-    [rf]
-  );
+export default function ArtistProfile() {
   return (
-    <TouchableOpacity style={style} onPress={() => navigation.goBack()}>
-      <Text style={{ color: "white", fontSize: rf(18) }}>←</Text>
-    </TouchableOpacity>
-  );
-});
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <View style={styles.header}>
+        <TouchableOpacity style={styles.backButton}>
+          <Ionicons name="chevron-back" size={28} color="#fff" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Perfil Artista</Text>
+      </View>
 
-
-const FollowButton = memo(({ rf, width }) => {
-  const style = useMemo(
-    () => ({
-      backgroundColor: "rgba(139, 69, 19, 0.8)",
-      paddingHorizontal: width < 360 ? rf(30) : rf(40),
-      paddingVertical: rf(12),
-      borderRadius: rf(25),
-      marginBottom: rf(20),
-    }),
-    [rf, width]
-  );
-  return (
-    <TouchableOpacity style={style}>
-      <Text style={{ color: "white", fontSize: rf(16), fontWeight: "bold" }}>Seguir +</Text>
-    </TouchableOpacity>
-  );
-});
-
-export default function Index() {
-  const { width, height } = useWindowDimensions();
-
-  const clamp = (val, min, max) => Math.max(min, Math.min(max, val));
-  const rf = useMemo(() => (size) => Math.round(clamp(size * (width / 390), 12, 28)), [width]);
-
-  const paddingHorizontal = useMemo(() => Math.max(16, width * 0.05), [width]);
-  const paddingTop = useMemo(() => Math.max(40, height * 0.06), [height]);
-  const artistCols = useMemo(() => (width > 500 ? 3 : width > 350 ? 2 : 1), [width]);
-  const artistWidth = useMemo(() => (width - paddingHorizontal * 2 - (artistCols - 1) * rf(10)) / artistCols, [
-    width,
-    paddingHorizontal,
-    artistCols,
-    rf,
-  ]);
-
-  const genres = useMemo(() => ["Rock", "Metal industrial", "Forró", "Glam Rock"], []);
-  const artists = useMemo(
-    () => [
-      { icon: "🎵", name: "Jackson do Pandeiro" },
-      { icon: "🎸", name: "Nirvana" },
-      { icon: "🎤", name: "Marilyn Manson" },
-      { icon: "🎷", name: "Miles Davis" },
-      { icon: "🎹", name: "Chick Corea" },
-    ],
-    []
-  );
-
-  const scrollContentStyle = useMemo(() => ({ paddingBottom: rf(40) }), [rf]);
-  const profileIconStyle = useMemo(
-    () => ({
-      justifyContent: "center",
-      alignItems: "center",
-      borderRadius: rf(60),
-      backgroundColor: "#4A5568",
-      marginBottom: rf(20),
-    }),
-    [rf]
-  );
-  const bioBoxStyle = useMemo(
-    () => ({
-      backgroundColor: "rgba(139, 69, 19, 0.6)",
-      borderRadius: rf(20),
-      padding: rf(20),
-      marginBottom: rf(20),
-    }),
-    [rf]
-  );
-
-  return (
-    <LinearGradient colors={["#8B5CF6", "#EAB308"]} style={{ flex: 1 }}>
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={scrollContentStyle}>
-       
-        <View style={{ paddingTop, paddingHorizontal, paddingBottom: rf(20) }}>
-          <HeaderButton rf={rf} /> 
+      <View style={styles.artistImageContainer}>
+        <Image
+          source={{
+            uri: "",
+          }}
+          style={styles.artistImage}
+          resizeMode="cover"
+        />
+        <View style={styles.artistNameOverlay}>
+          <Text style={styles.artistName}>GREEN DAY</Text>
         </View>
+      </View>
 
-       
-        <View style={{ alignItems: "center", paddingHorizontal }}>
-          <View style={[profileIconStyle, { width: rf(120), height: rf(120) }]}>
-            <Text style={{ color: "white", fontSize: rf(20) }}>👤</Text>
-          </View>
-
-          <Text style={{ color: "white", fontSize: rf(24), fontWeight: "bold", marginBottom: rf(8), textAlign: "center" }}>
-            Fulano D'Town
-          </Text>
-
-          <Text style={{ color: "white", fontSize: rf(16), marginBottom: rf(20), textAlign: "center" }}>
-            23 seguidores • 4 seguindo
-          </Text>
-
-          <FollowButton rf={rf} width={width} />
-
-          <Text style={{ color: "white", fontSize: rf(14), marginBottom: rf(20), textAlign: "center" }}>
-            yrCapsaicin 🎵 naousoiphone
-          </Text>
+      <View style={styles.actionSection}>
+        <View style={styles.followButtonContainer}>
+          <TouchableOpacity style={styles.followButton}>
+            <Text style={styles.followButtonText}>Seguir</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuButton}>
+            <Ionicons name="ellipsis-vertical" size={20} color="#fff" />
+          </TouchableOpacity>
         </View>
-
-        {/* Bio */}
-        <View style={[bioBoxStyle, { marginHorizontal: paddingHorizontal }]}>
-          <Text style={{ color: "white", fontSize: rf(16), lineHeight: rf(24), textAlign: "justify" }}>
-            eeeer amo ouçar musga{"\n"}amo tumati tamem
-          </Text>
+        <View style={styles.playButtons}>
+          <TouchableOpacity style={styles.shuffleButton}>
+            <Ionicons name="shuffle" size={24} color="#fff" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.playButton}>
+            <Ionicons name="play" size={28} color="#000" />
+          </TouchableOpacity>
         </View>
+      </View>
 
-        {/* Tags */}
-        <View style={{ paddingHorizontal, marginBottom: rf(30) }}>
-          <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" }}>
-            {genres.map((g, i) => (
-              <GenreItem key={i} genre={g} rf={rf} width={width} />
-            ))}
-          </View>
+   
+      <LinearGradient colors={["#a020f0", "#d946ef", "#f97316", "#fbbf24"]} style={styles.popularSection}>
+        <Text style={styles.popularTitle}>Popular</Text>
+        <View style={styles.songsList}>
+          {songs.map((song) => (
+            <TouchableOpacity key={song.id} style={styles.songItem}>
+              <View style={styles.songThumbnail} />
+              <Text style={styles.songTitle}>{song.title}</Text>
+            </TouchableOpacity>
+          ))}
         </View>
-
-       
-        <View style={{ paddingHorizontal, paddingBottom: rf(40) }}>
-          <Text style={{ color: "white", fontSize: rf(20), fontWeight: "bold", marginBottom: rf(20) }}>
-            Artistas mais ouvidos
-          </Text>
-
-          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: rf(10) }}>
-            {artists.map((a, i) => (
-              <ArtistItem key={i} artist={a} rf={rf} artistWidth={artistWidth} />
-            ))}
-          </View>
-        </View>
-      </ScrollView>
-    </LinearGradient>
-  );
+        <TouchableOpacity style={styles.discographyButton}>
+          <Text style={styles.discographyButtonText}>Ver discografia</Text>
+        </TouchableOpacity>
+      </LinearGradient>
+    </ScrollView>
+  )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#1a1a1a",
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: "#2a2a2a",
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    borderRadius: 20,
+  },
+  headerTitle: {
+    flex: 1,
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#fff",
+    marginLeft: 16,
+  },
+  artistImageContainer: {
+    width: width,
+    height: 280,
+    position: "relative",
+  },
+  artistImage: {
+    width: "100%",
+    height: "100%",
+  },
+  artistNameOverlay: {
+    position: "absolute",
+    bottom: 16,
+    left: 16,
+  },
+  artistName: {
+    fontSize: 32,
+    fontWeight: "bold",
+    color: "#fff",
+    textShadowColor: "rgba(0, 0, 0, 0.75)",
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+  },
+  actionSection: {
+    backgroundColor: "#a020f0",
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  followButtonContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  followButton: {
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    paddingHorizontal: 24,
+    paddingVertical: 10,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.3)",
+  },
+  followButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  menuButton: {
+    width: 36,
+    height: 36,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  playButtons: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 16,
+  },
+  shuffleButton: {
+    width: 44,
+    height: 44,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  playButton: {
+    width: 52,
+    height: 52,
+    backgroundColor: "#fbbf24",
+    borderRadius: 26,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  popularSection: {
+    paddingHorizontal: 20,
+    paddingTop: 24,
+    paddingBottom: 32,
+  },
+  popularTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#fff",
+    marginBottom: 16,
+  },
+  songsList: {
+    gap: 12,
+  },
+  songItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 16,
+    paddingVertical: 8,
+  },
+  songThumbnail: {
+    width: 56,
+    height: 56,
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    borderRadius: 4,
+  },
+  songTitle: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: "#fff",
+  },
+  discographyButton: {
+    backgroundColor: "#fbbf24",
+    paddingVertical: 14,
+    borderRadius: 25,
+    alignItems: "center",
+    marginTop: 24,
+  },
+  discographyButtonText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#000",
+  },
+})
