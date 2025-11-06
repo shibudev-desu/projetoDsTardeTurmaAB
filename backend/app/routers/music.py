@@ -4,9 +4,9 @@ from app.db.fake_db import fake_db
 
 router = APIRouter()
 
-@router.get("/")
+@router.get("/get_music")
 def get_music():
-    return fake_db.musics
+    return fake_db['musics']
 
 @router.get("/{music_id}")
 def get_music(music_id: int):

@@ -1,9 +1,15 @@
 from fastapi.testclient import TestClient
+from fastapi import FastAPI
 from app.main import app
+from app.routers import music 
+
+app = FastAPI()
+app.include_router(music.router, prefix="/api/musics", tags=["musics"])
 
 client = TestClient(app)
 
 def test_create_music():
+    """Testa a criação de uma música (POST /api/musics/)"""
     music = {
         "title": "Balada Nova",
         "description": "Um novo hit",
@@ -11,11 +17,15 @@ def test_create_music():
         "duration": "3:45",
         "posted_at": "2025-09-20"
     }
+
     response = client.post("/api/musics/", json=music)
+    
     if response.status_code == 404:
-        print("Erro 404! Música não encontrada.")
-        print("Response content:", response.json())
+        print("\n Erro 404! A rota /api/musics/ não foi encontrada.")
+        print("Resposta do servidor:", response.json())
+        assert False, "Rota /api/musics/ não está registrada no app principal."
         return
+
     assert response.status_code == 200
     data = response.json()
     assert data["title"] == "Balada Nova"

@@ -2,7 +2,7 @@ from typing import Dict, Any, List, Counter
 from peewee import fn, JOIN
 from collections import defaultdict
 
-from backend.services.popular import recommend_popular
+from .popular import recommend_popular
 from .helper import try_import_models
 
 def recommend_collaborative_user(
