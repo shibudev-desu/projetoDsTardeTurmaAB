@@ -8,13 +8,13 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   View,
   useWindowDimensions
 } from 'react-native';
@@ -52,7 +52,7 @@ const Cadastro = () => {
     return Object.keys(newErrors).length === 0;
   }, [nome, email, senha]);
 
-  const handleCadastro = useCallback(() => {
+  const handleCadastro = useCallback(async () => {
     if (loading) return;
 
     if (!validateFields()) return;
@@ -60,13 +60,34 @@ const Cadastro = () => {
     setLoading(true);
     clearTimeout(debounceRef.current);
 
-    debounceRef.current = setTimeout(() => {
-      Alert.alert('Cadastro', 'Usuário cadastrado com sucesso!');
-      console.log('Nome:', nome);
-      console.log('Email:', email);
-      console.log('Senha:', senha);
+    try {
+      const response = await fetch('http://localhost:8000/api/users/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: nome,
+          email: email,
+          password: senha,
+          bio: '',
+          styles: [],
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        Alert.alert('Cadastro', 'Usuário cadastrado com sucesso!');
+        console.log('Usuário criado:', data);
+      } else {
+        const errorData = await response.json();
+        Alert.alert('Erro', errorData.detail || 'Erro ao cadastrar usuário');
+      }
+    } catch (error) {
+      Alert.alert('Erro', 'Erro de rede: ' + error.message);
+    } finally {
       setLoading(false);
-    }, 800);
+    }
   }, [nome, email, senha, loading, validateFields]);
 
   const dynamicStyles = useMemo(
@@ -91,7 +112,7 @@ const Cadastro = () => {
   );
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+    <Pressable onPress={Keyboard.dismiss} accessible={false}>
       <LinearGradient colors={['#8000d5', '#f910a3', '#fddf00']} style={styles.gradient}>
         <SafeAreaView style={styles.safe}>
           <KeyboardAvoidingView
@@ -199,7 +220,7 @@ const Cadastro = () => {
           </KeyboardAvoidingView>
         </SafeAreaView>
       </LinearGradient>
-    </TouchableWithoutFeedback>
+    </Pressable>
   );
 };
 
