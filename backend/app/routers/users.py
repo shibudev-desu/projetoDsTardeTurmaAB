@@ -1,6 +1,5 @@
 from fastapi import APIRouter
 from app.db.fake_db import fake_db
-from app.models import User
 
 router = APIRouter()
 
@@ -9,23 +8,33 @@ def get_users():
     return fake_db["users"]
 
 @router.post("/")
-def create_user(user: User):
+def create_user(user: dict):
+
     new_user = {
         "id": len(fake_db["users"]) + 1,
-        "name": user.name
+        "email": user.get("email"),
+        "username": user.get("username"),
+        "name": user.get("name"),
+        "password_hash": user.get("password_hash"),
+        "latitude": user.get("latitude"),
+        "longitude": user.get("longitude"),
+        "type": user.get("type", "normal"),
+        "created_at": user.get("created_at", "2025-01-01")
     }
+
     fake_db["users"].append(new_user)
     return new_user
 
 @router.get("/{user_id}")
 def get_user(user_id: int):
-    user = next((u for u in fake_db["users"] if u["id"] == user_id), None)
-    return user
+    return next((u for u in fake_db["users"] if u["id"] == user_id), None)
 
 @router.delete("/{user_id}")
 def delete_user(user_id: int):
     index = next((i for i, u in enumerate(fake_db["users"]) if u["id"] == user_id), None)
+
     if index is None:
-        return None
+        return {"error": "User not found"}
+
     del fake_db["users"][index]
     return {"message": "User deleted"}
