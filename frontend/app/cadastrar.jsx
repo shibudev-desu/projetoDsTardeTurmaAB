@@ -67,11 +67,15 @@ const Cadastro = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          id: Date.now(), // Simple ID generation
+          email,
+          username: nome.replace(/\s+/g, '').toLowerCase(), // Generate username from name
           name: nome,
-          email: email,
-          password: senha,
-          bio: '',
-          styles: [],
+          password_hash: senha,
+          latitude: 0.0,
+          longitude: 0.0,
+          type: 'normal',
+          created_at: new Date().toISOString().split('T')[0],
         }),
       });
 
@@ -81,10 +85,12 @@ const Cadastro = () => {
         console.log('Usuário criado:', data);
       } else {
         const errorData = await response.json();
-        Alert.alert('Erro', errorData.detail || 'Erro ao cadastrar usuário');
+        Alert.alert('Erro', `Falha no cadastro: ${errorData.detail || 'Erro desconhecido'}`);
+        console.error('Erro no cadastro:', errorData);
       }
     } catch (error) {
-      Alert.alert('Erro', 'Erro de rede: ' + error.message);
+      Alert.alert('Erro', 'Erro de conexão com o servidor.');
+      console.error('Erro de rede:', error);
     } finally {
       setLoading(false);
     }
