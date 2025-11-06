@@ -3,11 +3,14 @@ from datetime import date
 
 class User(BaseModel):
     id: int
-    name: str
     email: str
-    password: str
-    bio: str
-    styles: list[int]
+    username: str
+    name: str
+    password_hash: str
+    latitude: float | None = None
+    longitude: float | None = None
+    type: str = "normal"
+    created_at: str | None = None
 
 class Artist(BaseModel):
     id: int
