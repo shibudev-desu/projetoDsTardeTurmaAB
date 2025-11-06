@@ -1,9 +1,11 @@
 export class MongodbDatabase {
   connectionString = "";
-  instance
+  instance: any;
   constructor(connectionString: string) {
     this.connectionString = connectionString
   }
-  
-  connect(): void
+
+  connect(): void {
+    // Implementation for connecting to MongoDB
+  }
 }
