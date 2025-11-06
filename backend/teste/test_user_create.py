@@ -1,11 +1,19 @@
-from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from backend.app.main import app
+
+client = TestClient(app)
 
 def test_create_user():
     user = {
+        "id": 2,
         "email": "maria@gmail.com",
         "username": "mariazinha",
         "name": "Maria Silva",
-        "password_hash": "senha123"
+        "password_hash": "senha123",
+        "latitude": 0.0,
+        "longitude": 0.0,
+        "type": "normal",
+        "created_at": "2025-01-01"
     }
     response = client.post("/api/users/", json=user)
 
