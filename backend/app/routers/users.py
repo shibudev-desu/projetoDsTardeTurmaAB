@@ -28,11 +28,14 @@ def get_user(user_id: int):
 def create_user(user: User):
     new_user = {
         "id": len(fake_db['users']) + 1,
-        "name": user.name,
         "email": user.email,
-        "password": user.password,
-        "bio": user.bio,
-        "styles": user.styles
+        "username": user.username,
+        "name": user.name,
+        "password_hash": user.password_hash,
+        "latitude": user.latitude,
+        "longitude": user.longitude,
+        "type": user.type,
+        "created_at": user.created_at or "2025-01-01"
     }
 
     fake_db['users'].append(new_user)
@@ -51,11 +54,14 @@ def update_user(user_id: int, user: User):
 
     fake_db['users'][index] = {
         "id": user_id,
-        "name": user.name,
         "email": user.email,
-        "password": user.password,
-        "bio": user.bio,
-        "styles": user.styles
+        "username": user.username,
+        "name": user.name,
+        "password_hash": user.password_hash,
+        "latitude": user.latitude,
+        "longitude": user.longitude,
+        "type": user.type,
+        "created_at": user.created_at
     }
 
     return {"message": "User updated"}
