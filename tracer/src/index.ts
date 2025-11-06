@@ -1,21 +1,45 @@
 import express from 'express'
-import mongoose from 'mongoose'
-import { ENVIRONMENT } from "./environment/env.js"
-import logsRouter from './routes/logs.js'
+import { ENVIRONMENT } from "./environment/env"
+import { logger } from './infra/logger/pino'
+import { MongodbDatabase } from './infra/persistence/mongodb/database'
+import logsRouter from './routes/logs'
 
 const app = express()
 
-// Middleware to parse JSON
+// Middleware
 app.use(express.json())
 
-// Connect to MongoDB
-mongoose.connect(ENVIRONMENT.DATABASE_URI as string)
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('MongoDB connection error:', err))
+// API Key authentication middleware
+app.use((req, res, next) => {
+  const apiKey = req.headers['x-api-key']
+  if (!apiKey || apiKey !== ENVIRONMENT.API_KEY) {
+    return res.status(401).json({ error: 'Unauthorized' })
+  }
+  next()
+})
 
-// Use routes
+// Routes
 app.use('/logs', logsRouter)
 
-app.listen(ENVIRONMENT.PORT, () => {
-    console.log("SERVER LISTENING ON PORT " + ENVIRONMENT.PORT)
+// Health check
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok' })
 })
+
+// Connect to database and start server
+const startServer = async () => {
+  try {
+    const db = new MongodbDatabase(ENVIRONMENT.DATABASE_URI!)
+    await db.connect()
+    logger.info('Connected to MongoDB')
+
+    app.listen(ENVIRONMENT.PORT, () => {
+      logger.info(`SERVER LISTENING ON PORT ${ENVIRONMENT.PORT}`)
+    })
+  } catch (error) {
+    logger.error('Failed to start server', { error })
+    process.exit(1)
+  }
+}
+
+startServer()

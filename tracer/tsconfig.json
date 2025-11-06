@@ -13,6 +13,10 @@
     "sourceMap": true,
     "allowSyntheticDefaultImports": true
   },
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }
