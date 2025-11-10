@@ -1,5 +1,5 @@
-from typing import Dict, Any, List, Counter
-from collections import defaultdict
+from typing import Dict, Any, List
+from collections import defaultdict, Counter
 from app.db.supabase_client import get_supabase
 from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import JSONResponse
@@ -28,14 +28,17 @@ def recColab(
         if not target_likes: raise HTTPException( status_code=status.HTTP_404_NOT_FOUND, detail="Music Ratings not found ")
         
         ids_str = f"({','.join(map(str, target_likes))})"
-        cdd_res = supabase.table("user_music_ratings")\
-            .select("user_id, COUNT(music_id) as common")\
-            .filter("music_id", "in", ids_str)\
-            .eq("rating", 1)\
-            .neq("user_id", user_id)\
+        cdd_res = (
+            supabase.table("user_music_ratings")
+            .select("user_id")
+            .filter("music_id", "in", ids_str)
+            .eq("rating", 1)
+            .neq("user_id", user_id)
             .execute()
-
-        cdd_uid = [r["user_id"] for r in (cdd_res.data or [])]
+        )
+        user_counts = Counter(r["user_id"] for r in (cdd_res.data or []))
+        cdd_uid = [uid for uid, _ in user_counts.most_common(neigh_limit)]
+        
         if not cdd_uid: 
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, 
@@ -43,10 +46,11 @@ def recColab(
             )
         
         likes_map = defaultdict(set)
+        ids_str_users = f"({','.join(map(str, cdd_uid))})" if cdd_uid else "(0)"
         likes_res = (
             supabase.table("user_music_ratings")
             .select("user_id", "music_id")
-            .filter("user_id", "in", cdd_uid)
+            .filter("user_id", "in", ids_str_users)
             .eq("rating", 1)
             .execute()
         )
@@ -78,7 +82,8 @@ def recColab(
         top = track_scores.most_common(limit)
         music_ids = [m for m, _ in top]
 
-        musics_q = supabase.table("musics").select("*").filter("id", "in", music_ids).execute()
+        ids_str_music = f"({','.join(map(str, music_ids))})" if music_ids else "(0)"
+        musics_q = supabase.table("musics").select("*").filter("id", "in", ids_str_music).execute()
         
         musics = []
         score_map = {m: s for m, s in top}
