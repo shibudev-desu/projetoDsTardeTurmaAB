@@ -58,10 +58,14 @@ def update_user(user_id: int, user: User):
 
 @router.delete("/{user_id}")
 def delete_user(user_id: int):
-    index = next((i for i, u in enumerate(fake_db["users"]) if u["id"] == user_id), None)
+    existing = supabase.table("users").select("*").eq("id", user_id).single().execute()
+    if existing.error:
+        raise HTTPException(status_code=500, detail=str(existing.error))
+    if not existing.data:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
 
-    if index is None:
-        return {"error": "User not found"}
+    response = supabase.table("users").delete().eq("id", user_id).execute()
+    if response.error:
+        raise HTTPException(status_code=500, detail=str(response.error))
+    return {"message": "Usuário deletado"}
 
-    del fake_db["users"][index]
-    return {"message": "User deleted"}
