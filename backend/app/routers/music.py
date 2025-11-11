@@ -35,3 +35,23 @@ def get_music(music_id: int):
     if not response.data:
         raise HTTPException(status_code=404, detail="Music not found")
     return response.data
+
+@router.put("/{music_id}")
+def update_music(music_id: int, music: Music):
+    existing = supabase.table("musics").select("*").eq("id", music_id).single().execute()
+    if existing.error:
+        raise HTTPException(status_code=500, detail=str(existing.error))
+    if not existing.data:
+        raise HTTPException(status_code=404, detail="Music not found")
+
+    data = {
+        "title": music.title,
+        "description": music.description,
+        "artist_id": music.artist_id,
+        "duration": music.duration,
+        "posted_at": music.posted_at
+    }
+    response = supabase.table("musics").update(data).eq("id", music_id).execute()
+    if response.error:
+        raise HTTPException(status_code=500, detail=str(response.error))
+    return {"message": "Music updated", "data": response.data}
