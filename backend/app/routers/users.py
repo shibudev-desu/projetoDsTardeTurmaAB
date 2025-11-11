@@ -13,22 +13,21 @@ def get_users():
     return response.data
 
 @router.post("/")
-def create_user(user: dict):
+def create_user(user: User):
+    response = supabase.table("users").insert({
+        "name": user.name,
+        "email": getattr(user, "email", None),
+        "username": getattr(user, "username", None),
+        "password_hash": getattr(user, "password_hash", None),
+        "latitude": getattr(user, "latitude", None),
+        "longitude": getattr(user, "longitude", None),
+        "type": getattr(user, "type", "normal"),
+        "created_at": getattr(user, "created_at", None)
+    }).execute()
 
-    new_user = {
-        "id": len(fake_db["users"]) + 1,
-        "email": user.get("email"),
-        "username": user.get("username"),
-        "name": user.get("name"),
-        "password_hash": user.get("password_hash"),
-        "latitude": user.get("latitude"),
-        "longitude": user.get("longitude"),
-        "type": user.get("type", "normal"),
-        "created_at": user.get("created_at", "2025-01-01")
-    }
-
-    fake_db["users"].append(new_user)
-    return new_user
+    if response.error:
+        raise HTTPException(status_code=500, detail=str(response.error))
+    return response.data
 
 @router.get("/{user_id}")
 def get_user(user_id: int):
