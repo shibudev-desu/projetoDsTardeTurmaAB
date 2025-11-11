@@ -1,20 +1,19 @@
-import React, { useRef, useState, useEffect } from 'react';
+import { AntDesign } from "@expo/vector-icons";
+import { LinearGradient } from 'expo-linear-gradient';
+import { useEffect, useRef, useState } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  TouchableOpacity,
-  SafeAreaView,
-  Animated,
-  useWindowDimensions,
   AccessibilityInfo,
+  Animated,
   Platform,
+  Pressable,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+  View
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { LinearGradient } from 'expo-linear-gradient';
-import { AntDesign } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native"; 
 
 const App = () => {
   const scaleAnim = useRef(new Animated.Value(1)).current;
@@ -109,7 +108,7 @@ const App = () => {
             { marginTop: height * 0.03, flexDirection: isPortrait ? 'column' : 'row' },
           ]}
         >
-          <TouchableWithoutFeedback
+          <Pressable
             onPress={handlePress}
             accessibilityRole="button"
             accessibilityLabel="Botão de Curtir"
@@ -133,7 +132,7 @@ const App = () => {
               <Icon name="heart" size={mainHeartSize} color="#fff" style={styles.backHeart} />
               <Icon name="heart" size={mainHeartSize * 0.9} color="#ffd900" />
             </Animated.View>
-          </TouchableWithoutFeedback>
+          </Pressable>
 
           {!reduceMotionEnabled && showParticles &&
             particles.map((anim, i) => {

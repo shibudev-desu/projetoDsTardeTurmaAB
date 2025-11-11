@@ -1,46 +1,40 @@
-"""
-
-Este módulo define rotas para operações CRUD de usuários usando FastAPI.
-
-Variáveis:
-- fake_db: Lista simulando um banco de dados de usuários, cada usuário é um dicionário com 'id' e 'name'.
-
-Nota: Este código utiliza um banco de dados em memória apenas para fins de demonstração.
-
-"""
-
 from fastapi import APIRouter
-from app.models import User
 from app.db.fake_db import fake_db
 
 router = APIRouter()
 
 @router.get("/")
 def get_users():
-    return fake_db['users']
+    return fake_db["users"]
+
+@router.post("/")
+def create_user(user: dict):
+
+    new_user = {
+        "id": len(fake_db["users"]) + 1,
+        "email": user.get("email"),
+        "username": user.get("username"),
+        "name": user.get("name"),
+        "password_hash": user.get("password_hash"),
+        "latitude": user.get("latitude"),
+        "longitude": user.get("longitude"),
+        "type": user.get("type", "normal"),
+        "created_at": user.get("created_at", "2025-01-01")
+    }
+
+    fake_db["users"].append(new_user)
+    return new_user
 
 @router.get("/{user_id}")
 def get_user(user_id: int):
-    user = next((user for user in fake_db if user["id"] == user_id), None)
-    if user:
-        return user
-
-@router.post("/")
-def create_user(user: User):
-    new_user = {"id": len(fake_db) + 1, "name": user.name}
-    fake_db.users.append(new_user)
-    return new_user
-
-@router.put("/{user_id}")
-def update_user(user_id: int, user: User):
-    if user_id > len(fake_db):
-        return {"error": "User not found"}
-    fake_db.users[user_id - 1] = {"id": user_id, "name": user.name}
-    return {"message": "User updated"}
+    return next((u for u in fake_db["users"] if u["id"] == user_id), None)
 
 @router.delete("/{user_id}")
 def delete_user(user_id: int):
-    if user_id > len(fake_db):
+    index = next((i for i, u in enumerate(fake_db["users"]) if u["id"] == user_id), None)
+
+    if index is None:
         return {"error": "User not found"}
-    del fake_db.users[user_id - 1]
+
+    del fake_db["users"][index]
     return {"message": "User deleted"}

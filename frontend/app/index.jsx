@@ -2,22 +2,22 @@
 
 import { LinearGradient } from "expo-linear-gradient"
 import { router } from "expo-router"
-import { useState, useCallback, useMemo, useRef, useEffect } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import {
   Animated,
   Image,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
-  useWindowDimensions,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  Keyboard,
-  TouchableWithoutFeedback,
+  useWindowDimensions
 } from "react-native"
 
 export default function Index() {
@@ -39,10 +39,6 @@ export default function Index() {
       useNativeDriver: true,
     }).start()
   }, [])
-
-  function cadastro() {
-    router.push("/cadastrar")
-  }
 
   function cadastro() {
     router.push("/cadastrar");
@@ -72,7 +68,7 @@ export default function Index() {
   )
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+    <Pressable onPress={Keyboard.dismiss} accessible={false}>
       <LinearGradient colors={["#8000d5", "#f910a3", "#fddf00"]} style={styles.gradient}>
         <SafeAreaView style={styles.safe}>
           <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.flex}>
@@ -137,7 +133,7 @@ export default function Index() {
           </KeyboardAvoidingView>
         </SafeAreaView>
       </LinearGradient>
-    </TouchableWithoutFeedback>
+    </Pressable>
   )
 }
 
