@@ -29,4 +29,9 @@ def create_music(music: Music):
 
 @router.get("/{music_id}")
 def get_music(music_id: int):
-    return next((m for m in fake_db["musics"] if m["id"] == music_id), None)
+    response = supabase.table("musics").select("*").eq("id", music_id).single().execute()
+    if response.error:
+        raise HTTPException(status_code=500, detail=str(response.error))
+    if not response.data:
+        raise HTTPException(status_code=404, detail="Music not found")
+    return response.data
