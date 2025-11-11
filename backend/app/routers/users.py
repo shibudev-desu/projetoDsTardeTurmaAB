@@ -1,7 +1,9 @@
-from fastapi import APIRouter
-from app.db.fake_db import fake_db
+from fastapi import APIRouter, HTTPException
+from app.models import User
+from app.db.supabase_client import get_supabase
 
 router = APIRouter()
+supabase = get_supabase()
 
 @router.get("/")
 def get_users():
