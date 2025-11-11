@@ -55,3 +55,16 @@ def update_music(music_id: int, music: Music):
     if response.error:
         raise HTTPException(status_code=500, detail=str(response.error))
     return {"message": "Music updated", "data": response.data}
+
+@router.delete("/{music_id}")
+def delete_music(music_id: int):
+    existing = supabase.table("musics").select("*").eq("id", music_id).single().execute()
+    if existing.error:
+        raise HTTPException(status_code=500, detail=str(existing.error))
+    if not existing.data:
+        raise HTTPException(status_code=404, detail="Music not found")
+
+    response = supabase.table("musics").delete().eq("id", music_id).execute()
+    if response.error:
+        raise HTTPException(status_code=500, detail=str(response.error))
+    return {"message": "Music deleted"}
