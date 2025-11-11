@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from app.models import Artist
-from app.db.supabase import get_supabase
+from app.db.supabase_client import get_supabase
 
 router = APIRouter()
 supabase = get_supabase()
