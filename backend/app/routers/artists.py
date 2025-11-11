@@ -8,7 +8,10 @@ supabase = get_supabase()
 
 @router.get("/")
 def get_artists():
-    return fake_db["artists"]
+    response = supabase.table("artists").select("*").execute()
+    if response.error:
+        raise HTTPException(status_code=500, detail=str(response.error))
+    return response.data
 
 @router.post("/")
 def create_artist(artist: Artist):
