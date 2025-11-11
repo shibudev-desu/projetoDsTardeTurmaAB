@@ -1,17 +1,16 @@
 
-import React, { useRef } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import { useRef } from "react";
 import {
-  View,
-  Text,
+  Animated,
+  Dimensions,
   Image,
   StyleSheet,
-  Dimensions,
+  Text,
   TouchableOpacity,
-  Animated,
+  View,
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
-import { FlatList } from "react-native-gesture-handler";
 
 const { height, width } = Dimensions.get("window");
 
@@ -112,7 +111,6 @@ const styles = StyleSheet.create({
   },
   background: {
     ...StyleSheet.absoluteFillObject,
-    resizeMode: "cover",
   },
   gradient: {
     flex: 1,
@@ -131,6 +129,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     shadowColor: "#000",
+    shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.4,
     shadowRadius: 8,
     elevation: 10,

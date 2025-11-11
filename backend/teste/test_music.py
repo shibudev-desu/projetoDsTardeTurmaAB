@@ -1,10 +1,5 @@
 from fastapi.testclient import TestClient
-from fastapi import FastAPI
 from app.main import app
-from app.routers import music 
-
-app = FastAPI()
-app.include_router(music.router, prefix="/api/musics", tags=["musics"])
 
 client = TestClient(app)
 
