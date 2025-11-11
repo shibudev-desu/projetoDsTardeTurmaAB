@@ -1,10 +1,11 @@
-from fastapi import APIRouter
-from app.db.fake_db import fake_db
+from fastapi import APIRouter, HTTPException
 from app.models import Music
+from app.db.supabase import get_supabase
 
 router = APIRouter()
+supabase = get_supabase()
 
-@router.get("/")
+
 def get_all_musics():
     return fake_db["musics"]
 
