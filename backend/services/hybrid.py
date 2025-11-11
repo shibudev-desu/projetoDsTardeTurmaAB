@@ -27,7 +27,6 @@ async def recommend_hybrid(
   w_pop: float = 0.5,
   w_collab: float = 0.0, # desativado
   w_geo: float = 0.2,
-  # collab_similarity: str = "jaccard",
   geo_method: str = "haversine"
 ):
   supabase = get_supabase()
