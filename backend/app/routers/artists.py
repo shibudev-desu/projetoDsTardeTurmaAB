@@ -20,17 +20,15 @@ def create_artist(artist: Artist):
         raise HTTPException(status_code=500, detail=str(response.error))
     return response.data
 
-
 @router.get("/{artist_id}")
 def get_artist(artist_id: int):
-    return next((a for a in fake_db["artists"] if a["id"] == artist_id), None)
+    response = supabase.table("artists").select("*").eq("id", artist_id).single().execute()
+    if response.error:
+        raise HTTPException(status_code=500, detail=str(response.error))
+    if not response.data:
+        raise HTTPException(status_code=404, detail="Artist not found")
+    return response.data
 
-@router.put("/{artist_id}")
-def update_artist(artist_id: int, artist: Artist):
-    index = next((i for i, a in enumerate(fake_db["artists"]) if a["id"] == artist_id), None)
-    if index is None: return None
-    fake_db["artists"][index]["name"] = artist.name
-    return {"message": "Artist updated"}
 
 @router.delete("/{artist_id}")
 def delete_artist(artist_id: int):
