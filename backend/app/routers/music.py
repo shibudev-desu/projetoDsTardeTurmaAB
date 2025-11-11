@@ -15,16 +15,17 @@ def get_all_musics():
 
 @router.post("/")
 def create_music(music: Music):
-    new_music = {
-        "id": len(fake_db["musics"]) + 1,
+    data = {
         "title": music.title,
         "description": music.description,
         "artist_id": music.artist_id,
         "duration": music.duration,
         "posted_at": music.posted_at
     }
-    fake_db["musics"].append(new_music)
-    return new_music
+    response = supabase.table("musics").insert(data).execute()
+    if response.error:
+        raise HTTPException(status_code=500, detail=str(response.error))
+    return response.data
 
 @router.get("/{music_id}")
 def get_music(music_id: int):
