@@ -3,20 +3,18 @@
 from typing import List, Dict, Any
 from collections import defaultdict
 from utils.ramos_helper import try_import_models
-from collab import recommend_collaborative_user_based
-from ramos_popular import recommend_popular
+from popular import recommend_popular
 from geo import recommend_geo
 from app.db.supabase_client import get_supabase
 
-# Recomendações
+# Normalizando valores numéricos entre 0 e 1
 
 def _normalize_score_map(m: dict) -> dict:
   if not m:
     return {}
 
   vals = list(m.values())
-  mn = min(vals)
-  mx = max(vals)
+  mn, mx = min(vals), max(vals)
 
   if mx == mn:
     return {k: 1.0 for k in m}
@@ -26,10 +24,10 @@ def _normalize_score_map(m: dict) -> dict:
 async def recommend_hybrid(
   user_id: int,
   limit: int = 10,
-  w_pop: float = 0.3,
-  w_collab: float = 0.5,
+  w_pop: float = 0.5,
+  w_collab: float = 0.0, # desativado
   w_geo: float = 0.2,
-  collab_similarity: str = "jaccard",
+  # collab_similarity: str = "jaccard",
   geo_method: str = "haversine"
 ):
   supabase = get_supabase()
@@ -41,15 +39,6 @@ async def recommend_hybrid(
     limit=limit * 3
   )
 
-  try:
-    coll = await recommend_collaborative_user_based(
-      user_id=user_id,
-      limit=limit * 3,
-      similarity=collab_similarity
-    )
-  except Exception:
-    coll = []
-
   geo = await recommend_geo(
     user_id=user_id,
     radius_km=20.0,
@@ -60,34 +49,33 @@ async def recommend_hybrid(
   # Aqui é feito a conversão para o score maps
 
   pop_map = {p["id"]: float(p.get("likes", 0.0)) for p in pop}
-  coll_map = {c["id"]: float(c.get("score", 0.0)) for c in coll}
   geo_map = {
     g["id"]: (1.0 / (1.0 + g["distance_km"])) if g.get("distance_km") else 0.0
     for g in geo
   }
 
   pop_norm = _normalize_score_map(pop_map)
-  coll_norm = _normalize_score_map(coll_map)
   geo_norm = _normalize_score_map(geo_map)
 
-  # Realizando o rebalanço dos pesos
+  # Ajustes automáticos de pesos
 
-  total = float(w_pop + w_collab + w_geo) or 1.0
+  total = float(w_pop + w_geo) or 1.0
   w_pop /= total
-  w_collab /= total
   w_geo /= total
 
   combined = defaultdict(float)
 
   for mid, s in pop_norm.items():
     combined[mid] += w_pop * s
-  for mid, s in coll_norm.items():
-    combined[mid] += w_collab * s
   for mid, s in geo_norm.items():
     combined[mid] += w_geo * s
 
+  # Fallback em caso de ausência dos dados
+
   if not combined:
     return await recommend_popular(user_id=user_id, limit=limit)
+
+  # Ordena e busca informações das músicas
 
   sorted_top = sorted(combined.items(), key=lambda x: x[1], reverse=True)[:limit]
   ids = [i for i, _ in sorted_top]
@@ -102,7 +90,7 @@ async def recommend_hybrid(
 
   musics = response.data or []
 
-  # Inserção do score final para retornar ordenado
+  # Insere o score final
 
   for m in musics:
     m["score"] = float(score_lookup.get(m["id"], 0.0))
