@@ -31,7 +31,12 @@ def create_user(user: User):
 
 @router.get("/{user_id}")
 def get_user(user_id: int):
-    return next((u for u in fake_db["users"] if u["id"] == user_id), None)
+    response = supabase.table("users").select("*").eq("id", user_id).single().execute()
+    if response.error:
+        raise HTTPException(status_code=500, detail=str(response.error))
+    if not response.data:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+    return response.data
 
 @router.delete("/{user_id}")
 def delete_user(user_id: int):
