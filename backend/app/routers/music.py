@@ -1,71 +1,52 @@
 from fastapi import APIRouter, HTTPException
-from app.models import Music
 from app.db.supabase_client import get_supabase
 
 router = APIRouter()
 supabase = get_supabase()
 
 
-
 @router.get("/")
-def get_all_musics():
+def get_musics():
     response = supabase.table("musics").select("*").execute()
-    if response.error:
-        raise HTTPException(status_code=500, detail=str(response.error))
     return response.data
 
-@router.post("/")
-def create_music(music: Music):
-    data = {
-        "title": music.title,
-        "description": music.description,
-        "artist_id": music.artist_id,
-        "duration": music.duration,
-        "posted_at": music.posted_at
-    }
-    response = supabase.table("musics").insert(data).execute()
-    if response.error:
-        raise HTTPException(status_code=500, detail=str(response.error))
-    return response.data
 
 @router.get("/{music_id}")
-def get_music(music_id: int):
-    response = supabase.table("musics").select("*").eq("id", music_id).single().execute()
-    if response.error:
-        raise HTTPException(status_code=500, detail=str(response.error))
+def get_music_by_id(music_id: int):
+    response = supabase.table("musics").select("*").eq("id", music_id).execute()
     if not response.data:
         raise HTTPException(status_code=404, detail="Music not found")
-    return response.data
+    return response.data[0]
+
+
+@router.post("/")
+def create_music(music: dict):
+    # verifica se o artista existe e é do tipo "artist"
+    artist_check = (
+        supabase.table("users")
+        .select("*")
+        .eq("id", music["artist_id"])
+        .eq("type", "artist")
+        .execute()
+    )
+    if not artist_check.data:
+        raise HTTPException(status_code=400, detail="Invalid artist_id")
+
+    response = supabase.table("musics").insert(music).execute()
+    return response.data[0]
+
 
 @router.put("/{music_id}")
-def update_music(music_id: int, music: Music):
-    existing = supabase.table("musics").select("*").eq("id", music_id).single().execute()
-    if existing.error:
-        raise HTTPException(status_code=500, detail=str(existing.error))
-    if not existing.data:
+def update_music(music_id: int, music: dict):
+    response = supabase.table("musics").update(music).eq("id", music_id).execute()
+    if not response.data:
         raise HTTPException(status_code=404, detail="Music not found")
+    return response.data[0]
 
-    data = {
-        "title": music.title,
-        "description": music.description,
-        "artist_id": music.artist_id,
-        "duration": music.duration,
-        "posted_at": music.posted_at
-    }
-    response = supabase.table("musics").update(data).eq("id", music_id).execute()
-    if response.error:
-        raise HTTPException(status_code=500, detail=str(response.error))
-    return {"message": "Music updated", "data": response.data}
 
 @router.delete("/{music_id}")
 def delete_music(music_id: int):
-    existing = supabase.table("musics").select("*").eq("id", music_id).single().execute()
-    if existing.error:
-        raise HTTPException(status_code=500, detail=str(existing.error))
-    if not existing.data:
-        raise HTTPException(status_code=404, detail="Music not found")
-
     response = supabase.table("musics").delete().eq("id", music_id).execute()
-    if response.error:
-        raise HTTPException(status_code=500, detail=str(response.error))
-    return {"message": "Music deleted"}
+    if not response.data:
+        raise HTTPException(status_code=404, detail="Music not found")
+    return {"message": "Music deleted successfully"}
