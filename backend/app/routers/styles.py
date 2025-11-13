@@ -27,4 +27,4 @@ def create_style(styles: Styles):
     response = supabase.table("styles").insert(new_style).execute()
     if response.data:
         return response.data[0]
-    return {"error": "Failed to create style"}
+    return {"error": "Failed to create style"} 
