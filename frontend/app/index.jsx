@@ -44,7 +44,7 @@ export default function Index() {
     router.push("/cadastrar");
   }
   function entrar() {
-    router.push("/uploadMusic")
+    router.push("/home")
   }
 
   const dynamicStyles = useMemo(

@@ -52,7 +52,7 @@ const App = () => {
 
       
         <View style={styles.nav}>
-          <TouchableOpacity style={styles.navItem} onPress={() => goTo('configuracoes')}>
+          <TouchableOpacity style={styles.navItem} onPress={() => goTo('Configuracoes')}>
             <Text style={styles.navText1}>Configurações</Text>
           </TouchableOpacity>
 
@@ -72,17 +72,17 @@ const App = () => {
             <Text style={styles.navText1}>Perfil</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.navItem} onPress={() => goTo('selectgenero')}>
+          <TouchableOpacity style={styles.navItem} onPress={() => goTo('selectGenero')}>
             <Text style={styles.navText1}>SelecionarGenero</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.navItem} onPress={() => goTo('swipes')}>
+          <TouchableOpacity style={styles.navItem} onPress={() => goTo('Swipes')}>
             <Text style={styles.navText1}>Swipes</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.navItem} onPress={() => goTo('perfilartista')}>
             <Text style={styles.navText1}>PerfilArtista</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.navItem} onPress={() => goTo('uploadmusic')}>
+          <TouchableOpacity style={styles.navItem} onPress={() => goTo('uploadMusic')}>
             <Text style={styles.navText1}>UploadMusic</Text>
           </TouchableOpacity>
         </View>
