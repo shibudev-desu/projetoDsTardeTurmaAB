@@ -18,8 +18,10 @@ import {
   View,
   useWindowDimensions
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const Cadastro = () => {
+  const navigation = useNavigation();
   const { width, height } = useWindowDimensions();
 
   const clamp = useCallback((val, min, max) => Math.max(min, Math.min(max, val)), []);
@@ -67,9 +69,9 @@ const Cadastro = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          id: Date.now(), // Simple ID generation
+          id: Date.now(),
           email,
-          username: nome.replace(/\s+/g, '').toLowerCase(), // Generate username from name
+          username: nome.replace(/\s+/g, '').toLowerCase(),
           name: nome,
           password_hash: senha,
           latitude: 0.0,
@@ -134,10 +136,9 @@ const Cadastro = () => {
               keyboardShouldPersistTaps="handled"
             >
               <TouchableOpacity style={styles.backCircle} onPress={() => navigation.goBack()}>
-                        <AntDesign name="arrowleft" size={20} color="#fff" />
-                      </TouchableOpacity>
+                <AntDesign name="arrowleft" size={20} color="#fff" />
+              </TouchableOpacity>
               <Animated.View style={{ opacity: fadeAnim, alignItems: 'center', width: '100%' }}>
-                
                 <View style={[styles.logoContainer, dynamicStyles.logoContainer]}>
                   <Image
                     style={[styles.Logo, dynamicStyles.logo]}
@@ -145,12 +146,8 @@ const Cadastro = () => {
                     accessibilityLabel="Logo do aplicativo"
                   />
                 </View>
-
-                
                 <View style={[styles.formContainer, dynamicStyles.formPadding]}>
                   <Text style={[styles.titulo, dynamicStyles.titulo]}>Cadastro</Text>
-
-                 
                   {[
                     {
                       placeholder: 'Nome de usuário',
@@ -201,8 +198,6 @@ const Cadastro = () => {
                       {error && <Text style={styles.error}>{error}</Text>}
                     </React.Fragment>
                   ))}
-
-                 
                   <TouchableOpacity
                     activeOpacity={0.85}
                     style={[
@@ -231,36 +226,18 @@ const Cadastro = () => {
 };
 
 const styles = StyleSheet.create({
-  gradient: { 
-    flex: 1 
-  },
-  safe: { 
-    flex: 1 
-  },
-  flex: {
-    flex: 1 
-  },
-  logoContainer: {
-    alignSelf: 'center' 
-  },
-  Logo: { 
-    resizeMode: 'contain'
-  },
-  formContainer: {
-    width: '90%',
-    maxWidth: 450 
-  },
-  titulo: { 
-    fontFamily: 'negrito',
-    color: '#fff',
-    textAlign: 'center' 
-  },
+  gradient: { flex: 1 },
+  safe: { flex: 1 },
+  flex: { flex: 1 },
+  logoContainer: { alignSelf: 'center' },
+  Logo: { resizeMode: 'contain' },
+  formContainer: { width: '90%', maxWidth: 450 },
+  titulo: { fontFamily: 'negrito', color: '#fff', textAlign: 'center' },
   input: {
     borderRadius: 25,
     fontSize: 20,
     borderWidth: 2,
     borderColor: "#FFF",
- 
     fontFamily: "normal",
     color: "#FFF",
     shadowColor: "#000",
