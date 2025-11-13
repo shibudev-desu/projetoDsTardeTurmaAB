@@ -1,20 +1,30 @@
+import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
-import React, { useRef, useEffect } from 'react';
-import { Ionicons } from '@expo/vector-icons'; 
-import Logofundo from "../assets/images/Logofundo.png";
+import { useRouter } from 'expo-router';
+import React, { useEffect, useRef } from 'react';
 import {
   Animated,
   Image,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  ScrollView,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import Logofundo from "../assets/images/Logofundo.png";
+
+
 
 const Configuracoes = React.memo(() => {
+    const rout = useRouter();
+  
+    
+    const goTo = (path) => {
+      rout.push(`/${path}`);
+    }
+    
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation();
 
@@ -52,8 +62,8 @@ const Configuracoes = React.memo(() => {
             <Text style={styles.titulo}>Configurações</Text>
 
             {/* Botões */}
-            <View style={styles.botoesContainer}>
-              <TouchableOpacity style={styles.botao}>
+            <View style={styles.botoesContainer} >
+              <TouchableOpacity style={styles.botao}onPress={() => goTo('privacidade')}>
                 <Text style={styles.textoBotao}>Privacidade</Text>
               </TouchableOpacity>
 
