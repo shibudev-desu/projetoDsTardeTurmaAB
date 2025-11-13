@@ -52,4 +52,3 @@ def recommend_popular(
         })
 
     return out
-
