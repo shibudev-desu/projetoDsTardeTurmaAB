@@ -28,3 +28,15 @@ def create_style(styles: Styles):
     if response.data:
         return response.data[0]
     return {"error": "Failed to create style"} 
+
+@router.put("/styles/{styles_id}")
+def update_style(styles_id: int, styles: Styles):
+    supabase = get_supabase()
+    updated_data = {
+        "name": styles.name,
+        
+    }
+    response = supabase.table("styles").update(updated_data).eq("id", styles_id).execute()
+    if response.data:
+        return {"message": "style updated successfully"}
+    return {"error": "style not found"}
