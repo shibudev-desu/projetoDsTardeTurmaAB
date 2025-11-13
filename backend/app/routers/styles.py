@@ -16,3 +16,15 @@ def get_styles_by_id(styles_id: int):
     if response.data:
         return response.data[0]
     return {"error": "style not found"}
+
+@router.post("/styles")
+def create_style(styles: Styles):
+    supabase = get_supabase()
+    new_style = {
+       "name": styles.name,
+        
+    }
+    response = supabase.table("styles").insert(new_style).execute()
+    if response.data:
+        return response.data[0]
+    return {"error": "Failed to create style"}
