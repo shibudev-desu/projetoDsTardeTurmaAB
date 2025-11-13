@@ -52,7 +52,7 @@ const App = () => {
 
       
         <View style={styles.nav}>
-          <TouchableOpacity style={styles.navItem} onPress={() => goTo('configuracoes')}>
+          <TouchableOpacity style={styles.navItem} onPress={() => goTo('Configuracoes')}>
             <Text style={styles.navText1}>Configurações</Text>
           </TouchableOpacity>
 
