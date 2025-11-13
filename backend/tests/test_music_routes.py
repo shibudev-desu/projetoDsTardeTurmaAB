@@ -12,11 +12,25 @@ def test_get_all_musics():
 
 
 def test_create_music():
+    user = {
+        "email": f"user_{uuid.uuid4().hex[:6]}@gmail.com",
+        "username": f"user_{uuid.uuid4().hex[:4]}",
+        "name": "Usuário Teste",
+        "password_hash": "senha123",
+        "latitude": 0.0,
+        "longitude": 0.0,
+        "type": "artist",
+        "created_at": "2025-01-01"
+    }
+
+    user_response = client.post("/api/users/", json=user)
+    assert user_response.status_code == 200, user_response.text
+    user_id = user_response.json()["id"]
+
     music = {
         "title": f"Song {uuid.uuid4().hex[:6]}",
-        "artist_id": "test_artist_id_123",  # substitua por ID válido se necessário
+        "artist_id": user_id,
         "file_url": f"https://example.com/{uuid.uuid4().hex[:8]}.mp3",
-        "cover_url": "https://example.com/cover.jpg",
         "duration": 180,
         "genre": "Pop",
         "created_at": "2025-01-01"
