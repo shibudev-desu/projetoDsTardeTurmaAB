@@ -9,3 +9,10 @@ def get_styles():
     response = supabase.table("styles").select("*").execute()
     return response.data  
 
+@router.get("/styles/{styles_id}")
+def get_styles_by_id(styles_id: int):
+    supabase = get_supabase()
+    response = supabase.table("styles").select("*").eq("id", styles_id).execute()
+    if response.data:
+        return response.data[0]
+    return {"error": "style not found"}
