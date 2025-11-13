@@ -49,3 +49,4 @@ def delete_style(styles_id: int):
     if response.data:
         return {"message": "style deleted successfully"}
     return {"error": "style not found"}
+    
