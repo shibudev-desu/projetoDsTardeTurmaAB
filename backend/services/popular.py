@@ -1,3 +1,8 @@
+"""
+Este módulo fornece funcionalidades para recomendar músicas populares.
+As recomendações são baseadas na popularidade das músicas (número de likes) e na data de postagem,
+excluindo músicas que o usuário já avaliou.
+"""
 from typing import Dict, Any, List
 from app.db.supabase_client import get_supabase
 from fastapi import APIRouter, HTTPException, status
@@ -9,6 +14,20 @@ def recommend_popular(
     user_id: int, 
     limit: int = 10
 ) -> List[Dict[str, Any]]:
+    """
+    Retorna uma lista de músicas populares, excluindo as que o usuário já avaliou.
+
+    Args:
+        user_id (int): O ID do usuário para quem as recomendações são geradas.
+        limit (int): O número máximo de recomendações a serem retornadas.
+
+    Returns:
+        List[Dict[str, Any]]: Uma lista de dicionários, onde cada dicionário representa uma música popular
+                              com informações como ID, título, ID do artista, número de likes e data de postagem.
+
+    Raises:
+        HTTPException: Se o usuário não for encontrado.
+    """
     supabase = get_supabase()
 
     if user_id is not None:
