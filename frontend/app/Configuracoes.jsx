@@ -34,7 +34,7 @@ const Configuracoes = React.memo(() => {
       duration: 600,
       useNativeDriver: true,
     }).start();
-  }, []);
+  }, [fadeAnim]);
 
   return (
     <LinearGradient colors={['#8000d5', '#f910a3', '#fddf00']} style={styles.gradient}>
@@ -77,6 +77,8 @@ const Configuracoes = React.memo(() => {
     </LinearGradient>
   );
 });
+
+Configuracoes.displayName = 'Configuracoes';
 
 const styles = StyleSheet.create({
   gradient: {
