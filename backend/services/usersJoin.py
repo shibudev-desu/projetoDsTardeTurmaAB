@@ -1,3 +1,8 @@
+"""
+Este módulo implementa um sistema de recomendação colaborativa baseado em usuários.
+Ele encontra usuários com gostos musicais semelhantes e recomenda músicas que esses usuários gostaram,
+mas que o usuário alvo ainda não ouviu.
+"""
 from typing import Dict, Any, List
 from collections import defaultdict, Counter
 from app.db.supabase_client import get_supabase
@@ -12,6 +17,22 @@ def recColab(
     limit: int = 10, 
     neigh_limit: int = 200,
 ) -> List[Dict[str, Any]]:
+    """
+    Gera recomendações de música colaborativas para um usuário.
+
+    Args:
+        user_id (int): O ID do usuário para quem gerar recomendações.
+        limit (int): O número máximo de recomendações a serem retornadas.
+        neigh_limit (int): O número máximo de vizinhos (usuários semelhantes) a serem considerados.
+
+    Returns:
+        List[Dict[str, Any]]: Uma lista de dicionários, onde cada dicionário representa uma música recomendada
+                              com informações como ID, título, ID do artista e pontuação de similaridade.
+
+    Raises:
+        HTTPException: Se o usuário não for encontrado, não houver avaliações de música,
+                       não houver candidatos para recomendação ou se o cálculo de Jaccard falhar.
+    """
     try:
         supabase = get_supabase()
 

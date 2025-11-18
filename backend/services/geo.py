@@ -1,3 +1,7 @@
+"""
+Este módulo fornece funcionalidades para recomendar músicas com base na localização geográfica dos usuários e artistas.
+Ele utiliza diferentes métodos de cálculo de distância, como Haversine e earth_distance, para encontrar músicas relevantes.
+"""
 from typing import List, Dict, Any, Tuple
 from peewee import fn
 import logging
@@ -8,6 +12,25 @@ import backend.utils.geo
 logger = logging.getLogger(__name__)
 
 def recommend_geo(User=None, Music=None, UserMusicRating=None, user_id: int = None, radius_km: float = 20.0, limit: int = 10, method: str = "haversine") -> List[Dict[str, Any]]:
+  """
+  Recomenda músicas com base na localização geográfica do usuário.
+
+  Args:
+      User: Modelo do usuário (Peewee).
+      Music: Modelo da música (Peewee).
+      UserMusicRating: Modelo de avaliação de música do usuário (Peewee).
+      user_id (int): O ID do usuário para quem as recomendações são geradas.
+      radius_km (float): O raio em quilômetros para buscar artistas próximos.
+      limit (int): O número máximo de recomendações a serem retornadas.
+      method (str): O método de cálculo de distância a ser usado ("haversine" ou "earth_distance").
+
+  Returns:
+      List[Dict[str, Any]]: Uma lista de dicionários, onde cada dicionário representa uma música recomendada
+                            com informações como ID, título, ID do artista, distância e data de postagem.
+
+  Raises:
+      RuntimeError: Se os modelos Peewee não forem fornecidos ou importados corretamente.
+  """
   if not (User and Music and UserMusicRating):
     imported = try_import_models()
     User = User or imported.get("User")

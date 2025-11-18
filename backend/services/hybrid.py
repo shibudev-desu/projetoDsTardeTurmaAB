@@ -1,3 +1,7 @@
+"""
+Este módulo implementa um sistema de recomendação híbrido que combina diferentes abordagens
+(popularidade, geolocalização) para fornecer recomendações de música mais abrangentes.
+"""
 # Traduzindo o código de peewee para ser utilizado com supabase.
 
 from typing import List, Dict, Any
@@ -10,6 +14,15 @@ from app.db.supabase_client import get_supabase
 # Normalizando valores numéricos entre 0 e 1
 
 def _normalize_score_map(m: dict) -> dict:
+  """
+  Normaliza os valores numéricos em um dicionário para uma escala de 0 a 1.
+
+  Args:
+      m (dict): Um dicionário onde as chaves são IDs e os valores são pontuações numéricas.
+
+  Returns:
+      dict: Um novo dicionário com as pontuações normalizadas.
+  """
   if not m:
     return {}
 
@@ -29,6 +42,21 @@ async def recommend_hybrid(
   w_geo: float = 0.2,
   geo_method: str = "haversine"
 ):
+  """
+  Gera recomendações de música híbridas para um usuário, combinando popularidade e geolocalização.
+
+  Args:
+      user_id (int): O ID do usuário para quem as recomendações são geradas.
+      limit (int): O número máximo de recomendações a serem retornadas.
+      w_pop (float): Peso para as recomendações baseadas em popularidade.
+      w_collab (float): Peso para as recomendações colaborativas (atualmente desativado).
+      w_geo (float): Peso para as recomendações baseadas em geolocalização.
+      geo_method (str): O método de cálculo de distância a ser usado para recomendações geográficas.
+
+  Returns:
+      List[Dict[str, Any]]: Uma lista de dicionários, onde cada dicionário representa uma música recomendada
+                            com informações como ID, título, ID do artista e pontuação híbrida.
+  """
   supabase = get_supabase()
 
   # Recomendações individuais

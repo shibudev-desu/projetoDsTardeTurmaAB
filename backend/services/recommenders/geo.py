@@ -1,23 +1,26 @@
+"""
+Este módulo fornece uma função para recomendar músicas com base na proximidade geográfica
+dos artistas em relação ao usuário, utilizando o cliente Supabase.
+"""
 import supabase as sb
 import haversine as hs
 
 url = "https://mflpegvqdnqdfvbvfdos.supabase.co"
 key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1mbHBlZ3ZxZG5xZGZ2YnZmZG9zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAwNDQ3ODEsImV4cCI6MjA3NTYyMDc4MX0.DLcfAc8u1dA91oISnOEMTIq1GxQZ7AAUXWiWmlf0Uo4"
 
-"""
-Essa função retorna uma lista com dicionários.
-Cada dicionário possui: id, nome da música e o nome do artista.
-
-Estrutura:
-[{'id': 1, 'title': 'Nome', 'artist_id': {'name': 'Nome do artista'}]
-
-Parâmetros:
-user (int) = Id do usuário que irá receber as recomendações.
-radius (int | float) = Raio, em km, do círculo em volta do usuário.
-limit = Quantidade de recomendações que retornarão.
-"""
-
 def recommendGeo(user, radius=10, limit=10):
+  """
+  Recomenda músicas com base na proximidade geográfica dos artistas.
+
+  Args:
+      user (int): O ID do usuário para quem as recomendações são geradas.
+      radius (int | float): O raio em quilômetros para buscar artistas próximos.
+      limit (int): O número máximo de recomendações a serem retornadas.
+
+  Returns:
+      list: Uma lista de dicionários, onde cada dicionário possui: id, título da música e nome do artista.
+            Exemplo: [{'id': 1, 'title': 'Nome', 'artist_id': {'name': 'Nome do artista'}}]
+  """
   try:
     client = sb.create_client(url, key)
   except Exception as e:

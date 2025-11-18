@@ -1,6 +1,25 @@
+"""
+Este módulo contém a implementação da fórmula de Haversine para calcular a distância
+entre dois pontos geográficos (latitude e longitude) na superfície da Terra.
+"""
 import math
 
 def haversine(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+  """
+  Calcula a distância Haversine entre dois pontos geográficos em quilômetros.
+
+  Args:
+      lat1 (float): Latitude do primeiro ponto.
+      lon1 (float): Longitude do primeiro ponto.
+      lat2 (float): Latitude do segundo ponto.
+      lon2 (float): Longitude do segundo ponto.
+
+  Returns:
+      float: A distância Haversine entre os dois pontos em quilômetros.
+
+  Raises:
+      ValueError: Se as coordenadas fornecidas forem inválidas ou não numéricas.
+  """
   if lat1 is None or lat2 is None or lon1 is None or lon2 is None:
     raise ValueError("Coordenadas inválidas para haversine")
   

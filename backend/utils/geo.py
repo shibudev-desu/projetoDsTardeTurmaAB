@@ -1,6 +1,21 @@
+"""
+Este módulo contém funções utilitárias para cálculos geográficos, como a distância Haversine.
+"""
 import math
 
 def _haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    """
+    Calcula a distância Haversine entre dois pontos geográficos em quilômetros.
+
+    Args:
+        lat1 (float): Latitude do primeiro ponto.
+        lon1 (float): Longitude do primeiro ponto.
+        lat2 (float): Latitude do segundo ponto.
+        lon2 (float): Longitude do segundo ponto.
+
+    Returns:
+        float: A distância Haversine entre os dois pontos em quilômetros.
+    """
     R = 6371  # Radius of Earth in kilometers
 
     lat1_rad = math.radians(lat1)
