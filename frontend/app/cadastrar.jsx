@@ -22,7 +22,7 @@ import { useNavigation } from '@react-navigation/native';
 
 const Cadastro = () => {
   const navigation = useNavigation();
-  const { width, height } = useWindowDimensions();
+  const { width } = useWindowDimensions();
 
   const clamp = useCallback((val, min, max) => Math.max(min, Math.min(max, val)), []);
   const rf = useCallback((size) => Math.round(clamp(size * (width / 390), 12, 30)), [width, clamp]);
@@ -43,7 +43,7 @@ const Cadastro = () => {
       duration: 600,
       useNativeDriver: true,
     }).start();
-  }, []);
+  }, [fadeAnim]);
 
   const validateFields = useCallback(() => {
     const newErrors = {};
@@ -116,7 +116,7 @@ const Cadastro = () => {
       textoBotao: { fontSize: rf(19) },
       titulo: { fontSize: rf(26), marginBottom: rf(20) },
     }),
-    [width, rf]
+    [rf]
   );
 
   return (

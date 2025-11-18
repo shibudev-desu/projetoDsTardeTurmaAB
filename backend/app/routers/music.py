@@ -1,10 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from app.db.supabase_client import get_supabase
 
-router = APIRouter(
-    prefix="/api/musics",
-    tags=["musics"]
-)
+router = APIRouter()
 
 
 @router.get("/")

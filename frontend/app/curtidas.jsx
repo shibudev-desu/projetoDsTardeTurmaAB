@@ -1,4 +1,4 @@
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, FontAwesome } from "@expo/vector-icons";
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -13,9 +13,8 @@ import {
   useWindowDimensions,
   View
 } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
 
-const App = () => {
+const App = ({ navigation = { goBack: () => {} } }) => {
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const [showParticles, setShowParticles] = useState(false);
   const { width, height } = useWindowDimensions();
@@ -129,8 +128,8 @@ const App = () => {
                 },
               ]}
             >
-              <Icon name="heart" size={mainHeartSize} color="#fff" style={styles.backHeart} />
-              <Icon name="heart" size={mainHeartSize * 0.9} color="#ffd900" />
+              <FontAwesome name="heart" size={mainHeartSize} color="#fff" style={styles.backHeart} />
+              <FontAwesome name="heart" size={mainHeartSize * 0.9} color="#ffd900" />
             </Animated.View>
           </Pressable>
 
@@ -163,7 +162,7 @@ const App = () => {
                     opacity,
                   }}
                 >
-                  <Icon name="heart" size={particleSize} color={colors[i % colors.length]} />
+                  <FontAwesome name="heart" size={particleSize} color={colors[i % colors.length]} />
                 </Animated.View>
               );
             })}
@@ -270,12 +269,6 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     textAlign: 'center',
   },
-  nav: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    backgroundColor: '#000',
-  },
-  navItem: {},
   navText1: {
     color: '#ff3cf5',
   },

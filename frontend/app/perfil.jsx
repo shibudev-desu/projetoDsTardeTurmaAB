@@ -1,6 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useMemo, useState, memo, useCallback } from 'react';
-import { Image, StyleSheet, Text, TextInput, TouchableOpacity, useWindowDimensions, View } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native';
 import { AntDesign } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native"; 
 
@@ -16,7 +16,6 @@ const ProfileScreen = memo(() => {
     [width]
   );
 
-  const paddingHorizontal = Math.max(16, width * 0.06);
   const isSmallScreen = width < 360;
 
  
@@ -28,8 +27,6 @@ const ProfileScreen = memo(() => {
     ],
     []
   );
-
-  const headerRadius = rf(28);
 
  
   const handlePressIn = useCallback(() => setPressingLogout(true), []);
@@ -125,6 +122,8 @@ const ProfileScreen = memo(() => {
    
   );
 });
+
+ProfileScreen.displayName = 'ProfileScreen';
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#ffd3e8', alignItems: 'center' },
