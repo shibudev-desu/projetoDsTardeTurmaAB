@@ -1,0 +1,4 @@
+Nome: Gustavo Esteque Dubovicki
+Data: 13/11/2025 
+Área do bug: Front-end
+Descrição do bug/erro: Erro de navegação da tela cadastro para voltar a tela de login.
