@@ -9,9 +9,8 @@ app = FastAPI(title="Backend React Native API")
 
 # incluir rotas
 app.include_router(users_router, prefix="/api/users", tags=["users"])
-app.include_router(music_router, prefix="/api/music", tags=["music"])
+app.include_router(music_router, prefix="/api/musics", tags=["music"])
 
-app.include_router(music_router, prefix="", tags=["MusicsRoot"])
 app.include_router(artists_router, prefix="/api/artists", tags=["Artists"])
 app.include_router(popular.router, prefix="/api", tags=["popular"])
 app.include_router(usersJoin.router, prefix="/api", tags=["colab"])
