@@ -5,14 +5,12 @@ from backend.app.main import app
 client = TestClient(app)
 
 
-def test_get_all_musics():
-    response = client.get("/api/musics/")
-    assert response.status_code == 200
-    assert isinstance(response.json(), list)
+# ---------------------------
+#  Helpers (Factories)
+# ---------------------------
 
-
-def test_create_music():
-    user = {
+def make_user(**overrides):
+    base = {
         "email": f"user_{uuid.uuid4().hex[:6]}@gmail.com",
         "username": f"user_{uuid.uuid4().hex[:4]}",
         "name": "Usuário Teste",
@@ -22,22 +20,50 @@ def test_create_music():
         "type": "artist",
         "created_at": "2025-01-01"
     }
+    base.update(overrides)
+    return base
 
-    user_response = client.post("/api/users/", json=user)
-    assert user_response.status_code == 200, user_response.text
-    user_id = user_response.json()["id"]
 
-    music = {
+def make_music(artist_id: int, **overrides):
+    base = {
         "title": f"Song {uuid.uuid4().hex[:6]}",
-        "artist_id": user_id,
+        "artist_id": artist_id,
         "file_url": f"https://example.com/{uuid.uuid4().hex[:8]}.mp3",
         "duration": 180,
         "genre": "Pop",
         "created_at": "2025-01-01"
     }
+    base.update(overrides)
+    return base
 
-    response = client.post("/api/musics/", json=music)
-    assert response.status_code == 200, response.text
-    data = response.json()
+
+# ---------------------------
+#           TESTS
+# ---------------------------
+
+def test_get_all_musics():
+    response = client.get("/api/musics/")
+    assert response.status_code == 200
+    assert isinstance(response.json(), list)
+
+
+def test_create_music():
+    # Create artist
+    user_payload = make_user()
+    user_resp = client.post("/api/users/", json=user_payload)
+    assert user_resp.status_code == 200, user_resp.text
+    artist_id = user_resp.json()["id"]
+
+    # Create music
+    music_payload = make_music(artist_id=artist_id)
+    resp = client.post("/api/musics/", json=music_payload)
+
+    assert resp.status_code == 200, resp.text
+    data = resp.json()
+
     assert "id" in data
     assert data["title"].startswith("Song")
+    assert data["artist_id"] == artist_id
+    assert data["duration"] == 180
+    assert data["genre"] == "Pop"
+    assert data["file_url"].startswith("https://example.com/")
