@@ -16,6 +16,7 @@ GET http://127.0.0.1:8000/api/colab
 | `neigh_limit`| number   | Não         | Quantidade máxima de vizinhos (usuários similares) a considerar. Padrão: `200`. |
 
 ### Observações sobre erros
+- 400 User_id is required — `user_id` não fornecido
 - 404 User not found — quando `user_id` não existe.
 - 404 Music Ratings not found — quando o usuário não tem avaliações/likes.
 - 404 Candidates not found / Jaccard failed / Tracker failed — quando não há dados suficientes para recomendar.
