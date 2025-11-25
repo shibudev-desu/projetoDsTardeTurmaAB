@@ -3,7 +3,7 @@ Este módulo implementa um sistema de recomendação colaborativa baseado em usu
 Ele encontra usuários com gostos musicais semelhantes e recomenda músicas que esses usuários gostaram,
 mas que o usuário alvo ainda não ouviu.
 """
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Set
 from collections import defaultdict, Counter
 from app.db.supabase_client import get_supabase
 from fastapi import APIRouter, HTTPException, status
@@ -34,21 +34,28 @@ def recColab(
                        não houver candidatos para recomendação ou se o cálculo de Jaccard falhar.
     """
     try:
+        if user_id is None:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="user_id is required")
+
         supabase = get_supabase()
 
-        if user_id is not None:
-            user = supabase.table("users").select("id").eq("id", user_id).execute()
-            if not user.data:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND, 
-                    detail="User not found"
-                )
-        
-        target_likes_q = supabase.table("user_music_ratings").select("music_id").eq("user_id", user_id).execute()
-        target_likes = {r["music_id"] for r in (target_likes_q.data or [])}
-        if not target_likes: raise HTTPException( status_code=status.HTTP_404_NOT_FOUND, detail="Music Ratings not found ")
-        
-        ids_str = f"({','.join(map(str, target_likes))})"
+        # validate user exists
+        user_res = supabase.table("users").select("id").eq("id", user_id).execute()
+        if not (user_res.data):
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+        # get user's liked music ids
+        rated_res = supabase.table("user_music_ratings").select("music_id").eq("user_id", user_id).execute()
+        target_likes: Set[int] = {r["music_id"] for r in (rated_res.data or [])}
+        if not target_likes:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Music Ratings not found")
+
+        # helper to build PostgREST "in" clause (PostgREST expects parentheses)
+        def in_list(values):
+            return f"({','.join(map(str, values))})" if values else "(0)"
+
+        # fetch candidate rows (other users who liked same tracks) and count in Python
+        ids_str = in_list(target_likes)
         cdd_res = (
             supabase.table("user_music_ratings")
             .select("user_id")
