@@ -38,13 +38,9 @@ def recColab(
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="user_id is required")
 
         supabase = get_supabase()
-
-        # validate user exists
         user_res = supabase.table("users").select("id").eq("id", user_id).execute()
         if not (user_res.data):
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-
-        # get user's liked music ids
         rated_res = supabase.table("user_music_ratings").select("music_id").eq("user_id", user_id).execute()
         target_likes: Set[int] = {r["music_id"] for r in (rated_res.data or [])}
         if not target_likes:
@@ -54,7 +50,6 @@ def recColab(
         def in_list(values):
             return f"({','.join(map(str, values))})" if values else "(0)"
 
-        # fetch candidate rows (other users who liked same tracks) and count in Python
         ids_str = in_list(target_likes)
         cdd_res = (
             supabase.table("user_music_ratings")
@@ -65,38 +60,38 @@ def recColab(
             .execute()
         )
         user_counts = Counter(r["user_id"] for r in (cdd_res.data or []))
+        if not user_counts:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Candidates not found.")
+
+
         cdd_uid = [uid for uid, _ in user_counts.most_common(neigh_limit)]
-        
-        if not cdd_uid: 
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, 
-                detail="Candidates not found."
-            )
-        
-        likes_map = defaultdict(set)
-        ids_str_users = f"({','.join(map(str, cdd_uid))})" if cdd_uid else "(0)"
+
+        ids_users_str = in_list(cdd_uid)
         likes_res = (
             supabase.table("user_music_ratings")
             .select("user_id", "music_id")
-            .filter("user_id", "in", ids_str_users)
+            .filter("user_id", "in", ids_users_str)
             .eq("rating", 1)
             .execute()
         )
+
+        likes_map = defaultdict(set)
         for r in (likes_res.data or []):
             likes_map[r["user_id"]].add(r["music_id"])
 
-        def jaccard(a:set, b:set):
-            if not a and not b: return 0.0
-            inter = len(a & b) 
+        def jaccard(a: Set[int], b: Set[int]) -> float:
+            if not a and not b:
+                return 0.0
+            inter = len(a & b)
             union = len(a | b)
             return (inter / union) if union else 0.0
-        
-        sim_scores = {}
-        for uid, liked_set in likes_map.items():
-            sim = jaccard(set(target_likes), liked_set)
-            if sim > 0:
-                sim_scores[uid] = sim
-        if not sim_scores: 
+
+        sim_scores = {
+            uid: jaccard(target_likes, liked_set)
+            for uid, liked_set in likes_map.items()
+            if jaccard(target_likes, liked_set) > 0
+        }
+        if not sim_scores:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Jaccard failed.")
            
         track_scores = Counter()
